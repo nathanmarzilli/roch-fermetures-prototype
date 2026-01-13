@@ -133,7 +133,7 @@
                     </div>
                     <div class="lg:col-span-5 relative">
                         <div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative group">
-                            <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Villa" class="w-full h-full object-cover">
+                            <img src="https://static.wixstatic.com/media/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg/v1/fill/w_1905,h_919,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg" alt="Villa" class="w-full h-full object-cover">
                         </div>
                     </div>
                 </div>
@@ -267,46 +267,89 @@
                                     </div>
                                     <div>
                                         <h5 class="font-bold">Téléphone</h5>
-                                        <p class="text-gray-400 text-sm">04 50 00 00 00</p>
+                                        <p class="text-gray-400 text-sm">04 50 04 29 77</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-12 h-48 rounded-xl overflow-hidden relative border border-white/10 group cursor-pointer">
+                        <a href="https://www.google.com/maps/search/?api=1&query=140+rue+du+Pont+de+Dranse+74500+Publier+(Roch+Fermetures)" target="_blank" class="block mt-12 h-48 rounded-xl overflow-hidden relative border border-white/10 group cursor-pointer">
                              <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 flex items-center justify-center">
                                  <span class="bg-white text-brand-dark px-4 py-2 rounded-full font-bold text-sm">Voir le plan</span>
                              </div>
                              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover grayscale" alt="Map">
-                        </div>
+                        </a>
                     </div>
 
                     <!-- Colonne Droite: Formulaire de Devis -->
                     <div class="p-10 lg:p-12 bg-white">
                         <h3 class="text-2xl font-display font-bold text-brand-dark mb-2">Demander un Devis Gratuit</h3>
-                        <p class="text-gray-500 text-sm mb-8">Réponse sous 48h. Sans engagement.</p>
+                        <p class="text-gray-500 text-sm mb-6">Réponse sous 48h. Sans engagement.</p>
                         
                         <form class="space-y-4" onsubmit="event.preventDefault(); alert('Merci ! Votre demande a été envoyée.');">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nom</label>
-                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Nom">
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nom *</label>
+                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Nom">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Prénom</label>
-                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Prénom">
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Prénom *</label>
+                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Prénom">
                                 </div>
                             </div>
                             
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email</label>
-                                <input type="email" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="votre@email.com">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email *</label>
+                                    <input type="email" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Email">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Téléphone *</label>
+                                    <input type="tel" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="06 00 00 00 00">
+                                </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Projet</label>
+                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Adresse</label>
+                                <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Votre adresse">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Code Postal *</label>
+                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="74...">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Ville *</label>
+                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Votre ville">
+                                </div>
+                            </div>
+                            
+                            <!-- Nouveaux champs demandés -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Délai de travaux</label>
+                                    <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
+                                        <option>Pas de date fixée</option>
+                                        <option>Immédiat</option>
+                                        <option>Moins de 2 mois</option>
+                                        <option>De 3 à 6 mois</option>
+                                        <option>Dans l'année</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Votre projet concerne</label>
+                                    <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
+                                        <option>Une construction existante</option>
+                                        <option>Une construction neuve</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Produit concerné</label>
                                 <select id="contact-subject" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
-                                    <option>Je souhaite un devis...</option>
+                                    <option>Je souhaite un devis pour...</option>
                                     <option>Fenêtres</option>
                                     <option>Portes</option>
                                     <option>Volets</option>
@@ -318,7 +361,7 @@
 
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Message</label>
-                                <textarea rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Détaillez votre demande..."></textarea>
+                                <textarea rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Détaillez votre projet..."></textarea>
                             </div>
 
                             <button type="submit" class="w-full py-4 bg-brand-accent text-white font-bold rounded-lg hover:bg-orange-700 transition-colors shadow-lg transform hover:-translate-y-1">

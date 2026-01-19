@@ -1,0 +1,2 @@
+N'oublie aucune ligne de code et n'entraine aucune régression. Garde le même design du site je veux tout retrouver aux mêmes endroits, il faut conserver les mêmes blocs importants. Ne perds aucun lien.
+Pas de prévisualistion, donne moi juste les 2 fichiers modifiés

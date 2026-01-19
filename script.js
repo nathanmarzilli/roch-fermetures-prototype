@@ -138,12 +138,12 @@ function initProductsGrid() {
     
     productsData.forEach(product => {
         const card = document.createElement('div');
-        // Structure de carte "Full Image" avec overlay
-        card.className = 'group relative h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl wow-effect border border-gray-100';
+        // MODIFICATION: Taille harmonisée à h-80 pour correspondre aux réalisations
+        card.className = 'group relative h-80 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl wow-effect border border-gray-100';
         card.onclick = () => router('product', product.id);
         
         card.innerHTML = `
-            <!-- Image de fond prenant toute la place -->
+            <!-- Image de fond prenant toute la place, object-cover pour éviter l'étirement -->
             <img src="${product.image}" alt="${product.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
             
             <!-- Overlay dégradé pour lisibilité texte -->
@@ -175,24 +175,54 @@ function initRealisationsGrid() {
 
     realisationsData.forEach((imgSrc, index) => {
         const item = document.createElement('div');
-        item.className = 'rounded-2xl overflow-hidden h-72 relative group cursor-pointer wow-effect shadow-md';
+        // MODIFICATION: h-72 passé à h-80 pour standardisation. Ajout de onclick openLightbox.
+        item.className = 'rounded-2xl overflow-hidden h-80 relative group cursor-pointer wow-effect shadow-md';
+        item.setAttribute('onclick', `openLightbox('${imgSrc}')`);
         
         // Placeholder pour l'image (si les fichiers locaux ne sont pas présents, on met une image par défaut ou une gestion d'erreur)
-        // Note: Sur une vraie implémentation locale, assurez-vous que les fichiers existent.
-        // Ici on utilise le chemin fourni. Si l'image n'existe pas, on met un fallback visuel.
         item.innerHTML = `
             <img src="${imgSrc}" 
                  onerror="this.src='https://placehold.co/600x400/eee/ccc?text=Réalisation+${index+1}'"
                  alt="Réalisation Roch Fermetures" 
                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                 <div class="bg-white/20 backdrop-blur-md p-3 rounded-full">
+                 <div class="bg-white/20 backdrop-blur-md p-3 rounded-full hover:bg-white/40 transition-colors">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                  </div>
             </div>
         `;
         grid.appendChild(item);
     });
+}
+
+/* ==========================================================================
+   LIGHTBOX (Visualisation image)
+   ========================================================================== */
+
+function openLightbox(src) {
+    const lightbox = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    
+    // Gestion de l'image de fallback si le lien local ne marche pas (pour la démo)
+    const imgElement = new Image();
+    imgElement.src = src;
+    
+    imgElement.onload = () => {
+         img.src = src;
+    };
+    imgElement.onerror = () => {
+         // Fallback si l'image n'existe pas
+         img.src = 'https://placehold.co/800x600/eee/ccc?text=Image+Non+Disponible';
+    };
+
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Empêcher le scroll arrière-plan
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Réactiver le scroll
 }
 
 /* ==========================================================================

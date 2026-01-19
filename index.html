@@ -164,7 +164,8 @@
                 <!-- Main Title with staggered animation -->
                 <h1 class="text-6xl lg:text-8xl font-display font-bold leading-tight mb-8 text-white tracking-tight">
                     <span class="block animate-slide-up" style="animation-delay: 0.1s;">L'Excellence</span>
-					<span class="block text-white animate-slide-up" style="animation-delay: 0.2s;">de l'Habitat</span>
+                    <!-- MODIFICATION: text-white remplacé par text-brand-accent -->
+                    <span class="block text-brand-accent animate-slide-up" style="animation-delay: 0.2s;">de l'Habitat</span>
                 </h1>
                 
                 <p class="text-xl lg:text-2xl text-gray-200 mb-12 max-w-3xl leading-relaxed font-light animate-slide-up" style="animation-delay: 0.3s;">
@@ -324,7 +325,7 @@
                 <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2">
                         <div class="relative min-h-[400px]">
-                            <img src="https://static.wixstatic.com/media/f04f97d2dc7e4a209901251f0f2534ce.jpg/v1/fill/w_802,h_534,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f04f97d2dc7e4a209901251f0f2534ce.jpg" alt="Recrutement Roch Fermetures" class="absolute inset-0 w-full h-full object-cover">
+                            <img src="https://static.wixstatic.com/media/f04f97d2dc7e4a209901251f0f2534ce.jpg/v1/fill/w_800,h_534,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f04f97d2dc7e4a209901251f0f2534ce.jpg" alt="Recrutement Roch Fermetures" class="absolute inset-0 w-full h-full object-cover">
                             <div class="absolute inset-0 bg-brand-accent/10 mix-blend-multiply"></div>
                         </div>
                         <div class="p-12 lg:p-20 flex flex-col justify-center">
@@ -623,6 +624,12 @@
             </div>
         </div>
     </footer>
+
+    <!-- LIGHTBOX (Nouveau composant) -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-success-pop" onclick="event.stopPropagation()">
+        <button class="absolute top-4 right-4 text-white text-4xl hover:text-brand-accent w-12 h-12 flex items-center justify-center" onclick="closeLightbox()">&times;</button>
+    </div>
 
     <!-- Logic Script -->
     <script src="script.js"></script>

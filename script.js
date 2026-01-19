@@ -138,25 +138,27 @@ function initProductsGrid() {
     
     productsData.forEach(product => {
         const card = document.createElement('div');
-        // MODIFICATION: Taille harmonisée à h-80 pour correspondre aux réalisations
-        card.className = 'group relative h-80 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl wow-effect border border-gray-100';
+        // MODIFICATION: Taille ajustée à h-72 pour alignement avec les réalisations. Design "Premium" appliqué.
+        card.className = 'group relative h-72 rounded-[2rem] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-brand-gold/50';
         card.onclick = () => router('product', product.id);
         
         card.innerHTML = `
             <!-- Image de fond prenant toute la place, object-cover pour éviter l'étirement -->
             <img src="${product.image}" alt="${product.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
             
-            <!-- Overlay dégradé pour lisibilité texte -->
-            <div class="absolute inset-0 product-overlay opacity-90 group-hover:opacity-100 transition-opacity"></div>
+            <!-- Overlay dégradé plus sombre et élégant pour le style premium -->
+            <div class="absolute inset-0 product-overlay opacity-90 transition-opacity"></div>
             
-            <!-- Contenu texte positionné en bas -->
-            <div class="absolute bottom-0 left-0 w-full p-8 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full mb-3 shadow-sm">${product.category}</span>
-                <h4 class="text-3xl font-display font-bold text-white mb-2">${product.title}</h4>
-                <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
-                    <p class="text-gray-300 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 line-clamp-2">${product.desc}</p>
-                    <div class="mt-4 flex items-center text-brand-accent font-bold text-sm uppercase tracking-wider">
-                        Découvrir <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            <!-- Contenu texte positionné en bas avec style affiné -->
+            <div class="absolute bottom-0 left-0 w-full p-8 z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full shadow-sm">${product.category}</span>
+                </div>
+                <h4 class="text-3xl font-display font-bold text-white mb-2 tracking-tight group-hover:text-brand-gold transition-colors duration-300">${product.title}</h4>
+                <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100">
+                    <p class="text-gray-300 text-sm mt-2 leading-relaxed line-clamp-2 font-light border-l-2 border-brand-gold pl-3">${product.desc}</p>
+                    <div class="mt-4 flex items-center text-brand-gold font-bold text-xs uppercase tracking-widest">
+                        Explorer <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </div>
                 </div>
             </div>
@@ -175,11 +177,11 @@ function initRealisationsGrid() {
 
     realisationsData.forEach((imgSrc, index) => {
         const item = document.createElement('div');
-        // MODIFICATION: h-72 passé à h-80 pour standardisation. Ajout de onclick openLightbox.
-        item.className = 'rounded-2xl overflow-hidden h-80 relative group cursor-pointer wow-effect shadow-md';
+        // MODIFICATION: Retour à h-72 pour standardisation.
+        item.className = 'rounded-2xl overflow-hidden h-72 relative group cursor-pointer wow-effect shadow-md';
         item.setAttribute('onclick', `openLightbox('${imgSrc}')`);
         
-        // Placeholder pour l'image (si les fichiers locaux ne sont pas présents, on met une image par défaut ou une gestion d'erreur)
+        // Placeholder pour l'image
         item.innerHTML = `
             <img src="${imgSrc}" 
                  onerror="this.src='https://placehold.co/600x400/eee/ccc?text=Réalisation+${index+1}'"
@@ -327,18 +329,23 @@ function initReviewsCarousel() {
    ========================================================================== */
 
 function router(view, param) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
     const homeView = document.getElementById('view-home');
     const productView = document.getElementById('view-product');
 
     if (view === 'home') {
+        const wasHidden = homeView.classList.contains('hidden-page');
+
         productView.classList.add('hidden-page');
         productView.classList.remove('active-page');
         homeView.classList.remove('hidden-page');
         homeView.classList.add('active-page');
         
         if (param) {
+            // MODIFICATION: Correction du bug. Si on a une ancre, on scrolle vers l'élément directement.
+            // On ne scrolle plus en haut de page avant.
+            // Petit délai si on vient d'une autre page pour laisser le temps au DOM de s'afficher.
+            const delay = wasHidden ? 100 : 0;
+            
             setTimeout(() => {
                 const el = document.getElementById(param);
                 if(el) {
@@ -347,10 +354,15 @@ function router(view, param) {
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                 }
-            }, 300);
+            }, delay);
+        } else {
+            // Si pas d'ancre, alors on remonte en haut
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } 
     else if (view === 'product') {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Pour la page produit, on veut toujours être en haut
+
         const product = productsData.find(p => p.id === param);
         if (!product) return;
 

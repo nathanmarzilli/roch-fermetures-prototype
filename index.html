@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
         tailwind.config = {
@@ -30,6 +31,8 @@
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'success-pop': 'successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                     },
                     keyframes: {
                         fadeIn: {
@@ -39,6 +42,16 @@
                         slideUp: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        },
+                        successPop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
                         }
                     }
                 }
@@ -48,24 +61,45 @@
 
     <style>
         .glass-nav {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .hidden-page {
+        
+        /* Scrollbar hide for reviews but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
-        .active-page {
-            display: block;
-            animation: fadeIn 0.4s ease-out;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        /* Style spécifique pour gérer le mix JPG/PNG */
-        .img-container {
-            background: radial-gradient(circle at center, #f1f5f9 0%, #e2e8f0 100%);
+
+        .hidden-page { display: none; }
+        
+        .active-page { 
+            display: block; 
+            animation: fadeIn 0.4s ease-out; 
+        }
+
+        /* Effet Wow global sur les blocs interactifs */
+        .wow-effect {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .wow-effect:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Overlay gradient pour les images produits */
+        .product-overlay {
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, rgba(15, 23, 42, 0) 100%);
+        }
+        
+        /* Indicateur erreur formulaire */
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
         }
     </style>
 </head>
@@ -75,15 +109,15 @@
     <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="router('home')">
-                    <div class="w-10 h-10 bg-brand-dark text-white flex items-center justify-center rounded-lg mr-3 font-display font-bold text-xl">R</div>
+                <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="router('home')">
+                    <div class="w-10 h-10 bg-brand-dark text-white flex items-center justify-center rounded-lg mr-3 font-display font-bold text-xl transition-transform group-hover:rotate-12">R</div>
                     <span class="font-display font-bold text-xl tracking-tight uppercase">Roch<span class="text-brand-accent">.</span>Fermetures</span>
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
                     <button onclick="router('home', 'produits')" class="text-sm font-medium hover:text-brand-accent transition-colors">Nos Produits</button>
                     <button onclick="router('home', 'expertise')" class="text-sm font-medium hover:text-brand-accent transition-colors">L'Entreprise</button>
                     <button onclick="router('home', 'avis')" class="text-sm font-medium hover:text-brand-accent transition-colors">Avis</button>
-                    <button onclick="router('home', 'contact')" class="px-5 py-2.5 bg-brand-dark text-white text-sm font-medium rounded-full hover:bg-brand-accent transition-colors shadow-lg">Demander un devis</button>
+                    <button onclick="router('home', 'contact')" class="px-5 py-2.5 bg-brand-dark text-white text-sm font-medium rounded-full hover:bg-brand-accent transition-all shadow-lg hover:shadow-brand-accent/30 transform hover:-translate-y-0.5">Demander un devis</button>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-brand-dark p-2">
@@ -104,136 +138,140 @@
     <!-- ========================================= -->
     <!-- VIEW: HOME (Landing Page)                 -->
     <!-- ========================================= -->
-    <main id="view-home" class="active-page pt-20">
+    <main id="view-home" class="active-page">
         
-        <!-- Hero -->
-        <header class="relative pt-20 pb-20 lg:pt-32 lg:pb-32 overflow-hidden">
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl"></div>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
-                    <div class="lg:col-span-7 mb-12 lg:mb-0">
-                        <div class="inline-flex items-center px-3 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm mb-6">
-                            <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                            <span class="text-xs font-semibold tracking-wide uppercase text-gray-500">RGE & Qualibat</span>
-                        </div>
-                        <h1 class="text-5xl lg:text-7xl font-display font-bold leading-tight mb-6">
-                            L'art de <br><span class="text-brand-accent">l'ouverture.</span>
-                        </h1>
-                        <p class="text-lg text-gray-600 mb-8 max-w-2xl leading-relaxed">
-                            Expert menuiserie en Haute-Savoie depuis 13 ans. Une alliance parfaite entre design architectural et performance thermique pour votre habitat.
-                        </p>
-                        <div class="flex gap-4">
-                            <button onclick="router('home', 'contact')" class="px-8 py-4 bg-brand-dark text-white rounded-xl font-medium shadow-xl hover:bg-brand-accent transition-all">
-                                Commencer mon projet
-                            </button>
-                            <button onclick="router('home', 'showroom')" class="px-8 py-4 bg-white text-brand-dark border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-all">
-                                Showroom
-                            </button>
-                        </div>
+        <!-- MODERN HERO SECTION (Full Width) -->
+        <header class="relative w-full h-screen min-h-[600px] flex items-center overflow-hidden">
+            <!-- Background Image Full Width -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://static.wixstatic.com/media/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_90,enc_avif,quality_auto/villa-moderne.jpg" 
+                     alt="Villa Moderne Haute-Savoie" 
+                     class="w-full h-full object-cover transition-transform duration-[10s] hover:scale-105">
+                <!-- Dark Overlay for text readability -->
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-20">
+                <div class="max-w-3xl">
+                    <div class="inline-flex items-center px-4 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md mb-8 animate-fade-in">
+                        <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
+                        <span class="text-xs font-bold tracking-wide uppercase text-white">RGE & Qualibat 2025</span>
                     </div>
-                    <div class="lg:col-span-5 relative">
-                        <div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative group">
-                            <img src="https://static.wixstatic.com/media/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg/v1/fill/w_1905,h_919,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg" alt="Villa" class="w-full h-full object-cover">
-                        </div>
+                    
+                    <h1 class="text-5xl lg:text-7xl font-display font-bold leading-tight mb-6 text-white animate-slide-up" style="animation-delay: 0.1s;">
+                        L'art de <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-500">l'ouverture.</span>
+                    </h1>
+                    
+                    <p class="text-lg lg:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed animate-slide-up" style="animation-delay: 0.2s;">
+                        Expert menuiserie en Haute-Savoie depuis 13 ans. Une alliance parfaite entre design architectural et performance thermique pour votre habitat.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 animate-slide-up" style="animation-delay: 0.3s;">
+                        <button onclick="router('home', 'contact')" class="px-8 py-4 bg-brand-accent text-white rounded-xl font-bold shadow-[0_0_20px_rgba(194,65,12,0.5)] hover:bg-white hover:text-brand-accent transition-all transform hover:-translate-y-1">
+                            Commencer mon projet
+                        </button>
+                        <button onclick="router('home', 'produits')" class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/30 rounded-xl font-medium hover:bg-white hover:text-brand-dark transition-all transform hover:-translate-y-1">
+                            Découvrir nos univers
+                        </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce text-white/50">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
         </header>
 
         <!-- Catalogue Grid -->
-        <section id="produits" class="py-20 bg-gray-50">
+        <section id="produits" class="py-24 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h3 class="text-4xl font-display font-bold text-brand-dark">Nos 11 Univers</h3>
-                    <p class="text-gray-500 mt-4">Cliquez sur un produit pour voir les détails.</p>
+                    <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-3">Catalogue 2025</h2>
+                    <h3 class="text-4xl lg:text-5xl font-display font-bold text-brand-dark">Nos 11 Univers</h3>
+                    <div class="w-24 h-1 bg-brand-accent mx-auto mt-6 rounded-full"></div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
-                    <!-- Products injected via JS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
+                    <!-- Products injected via JS with "Full Image" layout -->
                 </div>
             </div>
         </section>
 
         <!-- Expertise Section -->
-        <section id="expertise" class="py-20 bg-brand-dark text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section id="expertise" class="py-24 bg-brand-dark text-white relative overflow-hidden">
+            <!-- Background element -->
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
-                        <h2 class="text-4xl font-display font-bold mb-6">Expertise Locale <span class="text-brand-accent">depuis 13 ans</span></h2>
-                        <p class="text-gray-400 text-lg leading-relaxed">
-                            Nous ne vendons pas seulement des produits. Nous vous accompagnons de l'étude à la pose. Maîtrise totale de votre chantier à Publier, Thonon et dans le Chablais.
+                        <div class="inline-block px-4 py-1 rounded-full bg-brand-accent/20 text-brand-accent font-bold text-sm mb-6">Depuis 2012</div>
+                        <h2 class="text-4xl lg:text-5xl font-display font-bold mb-8">Expertise Locale & <br><span class="text-brand-accent">Savoir-faire.</span></h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                            Nous ne vendons pas seulement des produits. Nous vous accompagnons de l'étude à la pose. Maîtrise totale de votre chantier à Publier, Thonon et dans tout le Chablais.
                         </p>
+                        <ul class="space-y-4 text-gray-300">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Poseurs salariés qualifiés (Pas de sous-traitance)
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Étude thermique personnalisée
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Service Après-Vente réactif sous 48h
+                            </li>
+                        </ul>
                     </div>
-                    <div class="grid grid-cols-2 gap-8">
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                            <div class="text-3xl font-bold text-brand-accent mb-1">100%</div>
-                            <div class="text-sm text-gray-400">Satisfaction Client</div>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
+                            <div class="text-4xl font-bold text-brand-accent mb-2">100%</div>
+                            <div class="text-sm text-gray-400 font-medium">Satisfaction Client</div>
                         </div>
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                            <div class="text-3xl font-bold text-brand-accent mb-1">RGE</div>
-                            <div class="text-sm text-gray-400">Certifié Qualibat</div>
+                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
+                            <div class="text-4xl font-bold text-white mb-2">RGE</div>
+                            <div class="text-sm text-gray-400 font-medium">Certifié Qualibat</div>
+                        </div>
+                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm col-span-2">
+                            <div class="text-4xl font-bold text-white mb-2">13 Ans</div>
+                            <div class="text-sm text-gray-400 font-medium">D'expérience sur le bassin Lémanique</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- AVIS CLIENTS -->
-        <section id="avis" class="py-20 bg-white border-b border-gray-100">
+        <!-- AVIS CLIENTS (Swipeable) -->
+        <section id="avis" class="py-24 bg-gray-50 border-b border-gray-200 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-end mb-12">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12">
                     <div>
                         <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-2">Témoignages</h2>
-                        <h3 class="text-3xl lg:text-4xl font-display font-bold text-brand-dark">Ce que disent nos clients</h3>
+                        <h3 class="text-3xl lg:text-4xl font-display font-bold text-brand-dark">La parole à nos clients</h3>
                     </div>
-                    <a href="https://www.google.com/search?sca_esv=01ea511289eab071&rlz=1C1CHBF_frFR860FR861&sxsrf=ANbL-n7nxk4eaEUmtWKxbDkCWEgUznluQQ:1768310792792&si=AL3DRZHrmvnFAVQPOO2Bzhf8AX9KZZ6raUI_dT7DG_z0kV2_x_X0LWMV91EQhngx7SiIwPkQ1utzu4NtCgWk_g7rIHJrxW-a9a3a2k6gHhhcdfgjDiRLEViC9hsvyvbFesTFc8RenYax&q=Roch+Fermetures+Avis&sa=X&ved=2ahUKEwiRpKCFz4iSAxXJTaQEHehQNZkQ0bkNegQIKRAE&cshid=1768310796008603&biw=1920&bih=919&dpr=1&aic=0" target="_blank" class="hidden md:inline-flex items-center text-brand-dark font-medium hover:text-brand-accent transition-colors">
-                        Voir tous les avis Google
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </a>
+                    <div class="flex gap-2 mt-4 md:mt-0">
+                        <button id="prev-review" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-brand-dark hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <button id="next-review" class="w-12 h-12 rounded-full border border-brand-dark bg-brand-dark text-white flex items-center justify-center hover:bg-brand-accent hover:border-brand-accent transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Avis 1 -->
-                    <div class="bg-gray-50 p-8 rounded-3xl relative">
-                        <div class="text-yellow-400 flex mb-4">★★★★★</div>
-                        <p class="text-gray-600 mb-6 italic">"Travail impeccable pour le changement de mes fenêtres. L'équipe est pro, ponctuelle et le chantier a été laissé très propre. Je recommande !"</p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-brand-dark rounded-full flex items-center justify-center text-white font-bold mr-3">M</div>
-                            <div>
-                                <p class="font-bold text-sm">Marc D.</p>
-                                <p class="text-xs text-gray-500">Client Google</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Avis 2 -->
-                    <div class="bg-gray-50 p-8 rounded-3xl relative">
-                        <div class="text-yellow-400 flex mb-4">★★★★★</div>
-                        <p class="text-gray-600 mb-6 italic">"Très bons conseils pour notre pergola. Le commercial a pris le temps d'étudier notre terrasse. Le résultat est magnifique."</p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-brand-accent rounded-full flex items-center justify-center text-white font-bold mr-3">S</div>
-                            <div>
-                                <p class="font-bold text-sm">Sophie L.</p>
-                                <p class="text-xs text-gray-500">Client Google</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Avis 3 -->
-                    <div class="bg-gray-50 p-8 rounded-3xl relative">
-                        <div class="text-yellow-400 flex mb-4">★★★★★</div>
-                        <p class="text-gray-600 mb-6 italic">"Portail motorisé installé la semaine dernière. Matériel de qualité, entreprise sérieuse et réactive. Merci à toute l'équipe."</p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold mr-3">P</div>
-                            <div>
-                                <p class="font-bold text-sm">Pierre V.</p>
-                                <p class="text-xs text-gray-500">Client Google</p>
-                            </div>
-                        </div>
+                <!-- Carousel Container -->
+                <div class="relative">
+                    <div id="reviews-track" class="flex gap-6 overflow-x-auto hide-scrollbar snap-x snap-mandatory py-4" style="scroll-behavior: smooth;">
+                        <!-- Reviews injected via JS (9 items) -->
                     </div>
                 </div>
                 
-                 <div class="mt-8 text-center md:hidden">
-                    <a href="https://www.google.com/search?sca_esv=01ea511289eab071&rlz=1C1CHBF_frFR860FR861&sxsrf=ANbL-n7nxk4eaEUmtWKxbDkCWEgUznluQQ:1768310792792&si=AL3DRZHrmvnFAVQPOO2Bzhf8AX9KZZ6raUI_dT7DG_z0kV2_x_X0LWMV91EQhngx7SiIwPkQ1utzu4NtCgWk_g7rIHJrxW-a9a3a2k6gHhhcdfgjDiRLEViC9hsvyvbFesTFc8RenYax&q=Roch+Fermetures+Avis&sa=X&ved=2ahUKEwiRpKCFz4iSAxXJTaQEHehQNZkQ0bkNegQIKRAE&cshid=1768310796008603&biw=1920&bih=919&dpr=1&aic=0" target="_blank" class="inline-flex items-center text-brand-dark font-medium hover:text-brand-accent transition-colors">
-                        Voir tous les avis sur Google
+                <div class="mt-8 text-center">
+                     <a href="https://www.google.com/search?q=Roch+Fermetures+Avis" target="_blank" class="inline-flex items-center text-sm font-bold text-brand-dark hover:text-brand-accent transition-colors border-b border-brand-dark hover:border-brand-accent pb-0.5">
+                        Lire les 142 avis sur Google
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </a>
                 </div>
@@ -241,133 +279,160 @@
         </section>
 
         <!-- Contact / Showroom & FORMULAIRE -->
-        <section id="contact" class="py-20 bg-gray-50">
+        <section id="contact" class="py-24 bg-white relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl lg:grid lg:grid-cols-2">
+                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl lg:grid lg:grid-cols-2 border border-gray-100">
                     
                     <!-- Colonne Gauche: Infos & Showroom -->
-                    <div class="p-10 lg:p-12 bg-brand-dark text-white relative flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-3xl font-display font-bold mb-6">Visitez notre Showroom</h3>
-                            <p class="text-gray-400 mb-8">Venez toucher la qualité de nos matériaux et discuter de votre projet avec nos experts autour d'un café.</p>
+                    <div class="p-10 lg:p-16 bg-brand-dark text-white relative flex flex-col justify-between overflow-hidden">
+                        <!-- Decorative bg -->
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-accent/20 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none"></div>
+
+                        <div class="relative z-10">
+                            <h3 class="text-4xl font-display font-bold mb-6">Visitez notre Showroom</h3>
+                            <p class="text-gray-400 mb-10 text-lg">Venez toucher la qualité de nos matériaux et discuter de votre projet avec nos experts autour d'un café.</p>
                             
-                            <div class="space-y-6">
-                                <div class="flex items-start">
-                                    <div class="bg-white/10 p-3 rounded-lg mr-4 flex-shrink-0">
-                                        <svg class="w-6 h-6 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                            <div class="space-y-8">
+                                <!-- Adresse Interactive -->
+                                <a href="https://www.google.com/maps/search/?api=1&query=140+rue+du+Pont+de+Dranse+74500+Publier+(Roch+Fermetures)" target="_blank" class="wow-effect flex items-start group p-4 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer">
+                                    <div class="bg-brand-accent p-3 rounded-xl mr-5 flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                                     </div>
                                     <div>
-                                        <h5 class="font-bold">Adresse</h5>
-                                        <p class="text-gray-400 text-sm">140, rue du Pont de Dranse<br>74500 Publier (La Petite Arche)</p>
+                                        <h5 class="font-bold text-xl mb-1">Adresse</h5>
+                                        <p class="text-gray-400 group-hover:text-white transition-colors">140, rue du Pont de Dranse<br>74500 Publier (La Petite Arche)</p>
                                     </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-white/10 p-3 rounded-lg mr-4 flex-shrink-0">
-                                        <svg class="w-6 h-6 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                </a>
+
+                                <!-- Téléphone Interactif -->
+                                <a href="tel:+33450042977" class="wow-effect flex items-start group p-4 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer">
+                                    <div class="bg-brand-accent p-3 rounded-xl mr-5 flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                     </div>
                                     <div>
-                                        <h5 class="font-bold">Téléphone</h5>
-                                        <p class="text-gray-400 text-sm">04 50 04 29 77</p>
+                                        <h5 class="font-bold text-xl mb-1">Téléphone</h5>
+                                        <p class="text-gray-400 group-hover:text-white transition-colors text-lg">04 50 04 29 77</p>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
 
-                        <a href="https://www.google.com/maps/search/?api=1&query=140+rue+du+Pont+de+Dranse+74500+Publier+(Roch+Fermetures)" target="_blank" class="block mt-12 h-48 rounded-xl overflow-hidden relative border border-white/10 group cursor-pointer">
-                             <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 flex items-center justify-center">
-                                 <span class="bg-white text-brand-dark px-4 py-2 rounded-full font-bold text-sm">Voir le plan</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query=140+rue+du+Pont+de+Dranse+74500+Publier+(Roch+Fermetures)" target="_blank" class="block mt-12 h-56 rounded-2xl overflow-hidden relative border border-white/10 group cursor-pointer shadow-2xl">
+                             <div class="absolute inset-0 bg-brand-dark/20 group-hover:bg-transparent transition-all z-10 flex items-center justify-center">
+                                 <span class="bg-white text-brand-dark px-6 py-3 rounded-full font-bold shadow-xl transform group-hover:scale-110 transition-transform flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                                     Ouvrir le GPS
+                                </span>
                              </div>
-                             <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover grayscale" alt="Map">
+                             <!-- Map Image pointing to Publier -->
+                             <img src="https://static-maps.yandex.ru/1.x/?ll=6.540,46.398&z=15&l=map&size=600,300&pt=6.540,46.398,pm2rdm" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Plan d'accès">
                         </a>
                     </div>
 
                     <!-- Colonne Droite: Formulaire de Devis -->
-                    <div class="p-10 lg:p-12 bg-white">
-                        <h3 class="text-2xl font-display font-bold text-brand-dark mb-2">Demander un Devis Gratuit</h3>
-                        <p class="text-gray-500 text-sm mb-6">Réponse sous 48h. Sans engagement.</p>
+                    <div class="p-10 lg:p-16 bg-white flex flex-col justify-center">
+                        <div id="form-container">
+                            <h3 class="text-3xl font-display font-bold text-brand-dark mb-2">Demander un Devis Gratuit</h3>
+                            <p class="text-gray-500 mb-8">Réponse sous 48h. Sans engagement.</p>
+                            
+                            <form id="contact-form" class="space-y-5">
+                                <div class="grid grid-cols-2 gap-5">
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Nom *</label>
+                                        <input type="text" name="nom" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Nom">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Ce champ est requis</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Prénom *</label>
+                                        <input type="text" name="prenom" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Prénom">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Ce champ est requis</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-5">
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Email *</label>
+                                        <input type="email" name="email" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Email">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Email invalide</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Téléphone *</label>
+                                        <input type="tel" name="phone" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="06 00 00 00 00">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Téléphone requis</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Adresse</label>
+                                    <input type="text" name="adresse" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Votre adresse">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-5">
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Code Postal *</label>
+                                        <input type="text" name="cp" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="74...">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Requis</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Ville *</label>
+                                        <input type="text" name="ville" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Votre ville">
+                                        <p class="text-red-500 text-xs mt-1 hidden error-msg">Requis</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Délai de travaux</label>
+                                        <select class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all cursor-pointer">
+                                            <option>Pas de date fixée</option>
+                                            <option>Immédiat</option>
+                                            <option>Moins de 2 mois</option>
+                                            <option>De 3 à 6 mois</option>
+                                            <option>Dans l'année</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Votre projet concerne</label>
+                                        <select class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all cursor-pointer">
+                                            <option>Une construction existante</option>
+                                            <option>Une construction neuve</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Produit concerné</label>
+                                    <select id="contact-subject" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all cursor-pointer">
+                                        <option value="">Je souhaite un devis pour...</option>
+                                        <option>Fenêtres</option>
+                                        <option>Portes</option>
+                                        <option>Volets</option>
+                                        <option>Pergola</option>
+                                        <option>Portail</option>
+                                        <option>Autre</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Message</label>
+                                    <textarea rows="3" class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none bg-gray-50 transition-all" placeholder="Détaillez votre projet..."></textarea>
+                                </div>
+
+                                <button type="submit" id="submit-btn" class="w-full py-5 bg-brand-accent text-white font-bold text-lg rounded-xl hover:bg-brand-dark transition-all shadow-xl transform hover:-translate-y-1 relative overflow-hidden group">
+                                    <span class="relative z-10">Envoyer ma demande</span>
+                                    <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-orange-600 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                </button>
+                            </form>
+                        </div>
                         
-                        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Merci ! Votre demande a été envoyée.');">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nom *</label>
-                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Nom">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Prénom *</label>
-                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Prénom">
-                                </div>
+                        <!-- Success Message Container (Hidden by default) -->
+                        <div id="success-message" class="hidden text-center py-10">
+                            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-success-pop text-green-500">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
-                            
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email *</label>
-                                    <input type="email" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Email">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Téléphone *</label>
-                                    <input type="tel" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="06 00 00 00 00">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Adresse</label>
-                                <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Votre adresse">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Code Postal *</label>
-                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="74...">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Ville *</label>
-                                    <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Votre ville">
-                                </div>
-                            </div>
-                            
-                            <!-- Nouveaux champs demandés -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Délai de travaux</label>
-                                    <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
-                                        <option>Pas de date fixée</option>
-                                        <option>Immédiat</option>
-                                        <option>Moins de 2 mois</option>
-                                        <option>De 3 à 6 mois</option>
-                                        <option>Dans l'année</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Votre projet concerne</label>
-                                    <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
-                                        <option>Une construction existante</option>
-                                        <option>Une construction neuve</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Produit concerné</label>
-                                <select id="contact-subject" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50">
-                                    <option>Je souhaite un devis pour...</option>
-                                    <option>Fenêtres</option>
-                                    <option>Portes</option>
-                                    <option>Volets</option>
-                                    <option>Pergola</option>
-                                    <option>Portail</option>
-                                    <option>Autre</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Message</label>
-                                <textarea rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none bg-gray-50" placeholder="Détaillez votre projet..."></textarea>
-                            </div>
-
-                            <button type="submit" class="w-full py-4 bg-brand-accent text-white font-bold rounded-lg hover:bg-orange-700 transition-colors shadow-lg transform hover:-translate-y-1">
-                                Envoyer ma demande
-                            </button>
-                        </form>
+                            <h3 class="text-3xl font-display font-bold text-brand-dark mb-4">Message Envoyé !</h3>
+                            <p class="text-gray-500 text-lg">Merci de votre confiance. Notre équipe va étudier votre projet et vous recontactera sous 48h.</p>
+                        </div>
                     </div>
 
                 </div>
@@ -381,69 +446,82 @@
     <main id="view-product" class="hidden-page pt-20 min-h-screen bg-white">
         <!-- Back Navigation -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <button onclick="router('home')" class="flex items-center text-gray-500 hover:text-brand-accent transition-colors group">
-                <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <button onclick="router('home')" class="flex items-center text-gray-500 hover:text-brand-accent transition-colors group font-medium">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3 group-hover:bg-brand-accent group-hover:text-white transition-colors">
+                    <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </div>
                 Retour aux produits
             </button>
         </div>
 
         <!-- Product Hero -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="animate-slide-up">
-                    <span id="detail-category" class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-2 block">Catégorie</span>
-                    <h1 id="detail-title" class="text-5xl lg:text-6xl font-display font-bold text-brand-dark mb-6">Titre Produit</h1>
-                    <p id="detail-desc" class="text-xl text-gray-600 leading-relaxed mb-8">Description détaillée...</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="animate-slide-up order-2 lg:order-1">
+                    <span id="detail-category" class="inline-block px-3 py-1 bg-brand-light text-brand-accent rounded-lg font-bold text-sm mb-4">Catégorie</span>
+                    <h1 id="detail-title" class="text-5xl lg:text-7xl font-display font-bold text-brand-dark mb-8">Titre Produit</h1>
+                    <p id="detail-desc" class="text-xl text-gray-600 leading-relaxed mb-10">Description détaillée...</p>
                     
-                    <div class="grid grid-cols-2 gap-6 mb-10">
-                        <div class="flex items-start">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="grid grid-cols-2 gap-6 mb-12">
+                        <div class="flex items-start bg-gray-50 p-4 rounded-xl">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4 flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div>
-                                <h4 class="font-bold text-brand-dark">Sur-Mesure</h4>
-                                <p class="text-sm text-gray-500">Adapté à vos dimensions</p>
+                                <h4 class="font-bold text-brand-dark text-lg">Sur-Mesure</h4>
+                                <p class="text-sm text-gray-500">Précision millimétrique</p>
                             </div>
                         </div>
-                        <div class="flex items-start">
-                            <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 mr-3 flex-shrink-0">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <div class="flex items-start bg-gray-50 p-4 rounded-xl">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-4 flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
                             <div>
-                                <h4 class="font-bold text-brand-dark">Haute Performance</h4>
-                                <p class="text-sm text-gray-500">Isolation thermique & phonique</p>
+                                <h4 class="font-bold text-brand-dark text-lg">Performance</h4>
+                                <p class="text-sm text-gray-500">Isolation certifiée</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- BOUTON DEVIS PRODUIT -->
-                    <button onclick="goToQuote()" class="w-full sm:w-auto px-8 py-4 bg-brand-dark text-white rounded-xl font-medium shadow-xl hover:bg-brand-accent transition-all">
-                        Demander un devis pour ce produit
+                    <button onclick="goToQuote()" class="w-full sm:w-auto px-10 py-5 bg-brand-dark text-white rounded-xl font-bold shadow-xl hover:bg-brand-accent transition-all transform hover:-translate-y-1">
+                        Obtenir un prix pour ce modèle
                     </button>
                 </div>
-                <div class="relative h-[500px] bg-gray-100 rounded-3xl overflow-hidden shadow-2xl animate-fade-in img-container flex items-center justify-center">
-                    <!-- Image container -->
-                    <img id="detail-image" src="" alt="Détail" class="max-w-full max-h-full object-contain p-4">
+                
+                <div class="order-1 lg:order-2 h-[400px] lg:h-[600px] rounded-[3rem] overflow-hidden shadow-2xl animate-fade-in relative group">
+                    <div class="absolute inset-0 bg-gray-200 animate-pulse" id="img-loader"></div>
+                    <img id="detail-image" src="" alt="Détail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Technical Specs / Options (Generic Placeholder) -->
-        <div class="bg-gray-50 py-20">
+        <!-- Technical Specs / Options -->
+        <div class="bg-brand-light py-24">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h3 class="text-2xl font-display font-bold mb-8">Options et Personnalisation</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h4 class="font-bold mb-2">Matériaux</h4>
-                        <p class="text-gray-500 text-sm">Disponible en Aluminium, PVC et Bois selon vos besoins esthétiques et thermiques.</p>
+                <h3 class="text-3xl font-display font-bold mb-10 text-center">Options et Personnalisation</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="wow-effect bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="w-12 h-12 bg-orange-100 text-brand-accent rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-layer-group text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Matériaux</h4>
+                        <p class="text-gray-500 leading-relaxed">Disponible en Aluminium, PVC et Bois selon vos besoins esthétiques et thermiques. Mixité des matériaux possible.</p>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h4 class="font-bold mb-2">Coloris</h4>
-                        <p class="text-gray-500 text-sm">Large palette de couleurs RAL et finitions texturées pour s'accorder à votre façade.</p>
+                    <div class="wow-effect bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-palette text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Coloris & Finitions</h4>
+                        <p class="text-gray-500 leading-relaxed">Large palette de couleurs RAL, bicoloration (intérieur/extérieur différent) et finitions texturées ou sablées.</p>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <h4 class="font-bold mb-2">Motorisation</h4>
-                        <p class="text-gray-500 text-sm">Compatible Somfy et domotique pour un confort d'utilisation au quotidien.</p>
+                    <div class="wow-effect bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-wifi text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-xl mb-3">Connectivité</h4>
+                        <p class="text-gray-500 leading-relaxed">Compatible Somfy IO et domotique. Pilotez vos fermetures à la voix ou depuis votre smartphone.</p>
                     </div>
                 </div>
             </div>
@@ -451,184 +529,30 @@
     </main>
 
     <!-- FOOTER (Global) -->
-    <footer class="bg-brand-dark text-white pt-20 pb-10 border-t border-white/10 mt-auto">
+    <footer class="bg-brand-dark text-white pt-24 pb-10 border-t border-white/10 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
              <div class="flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-8">
-                <p class="text-gray-500 text-sm">© 2025 Roch Fermetures.</p>
-                <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="https://www.facebook.com/rochfermetures" target="_blank" class="text-gray-500 hover:text-white transition-colors">Facebook</a>
+                <div class="mb-4 md:mb-0">
+                    <span class="font-display font-bold text-lg tracking-tight uppercase">Roch<span class="text-brand-accent">.</span>Fermetures</span>
+                    <p class="text-gray-500 text-sm mt-1">© 2025 Tous droits réservés.</p>
+                </div>
+                
+                <!-- Lien subtil demandé -->
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex space-x-6 mb-2">
+                        <a href="https://www.facebook.com/rochfermetures" target="_blank" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <a href="https://nathanmarzilli.github.io/portfolio/" target="_blank" class="text-xs text-gray-700 hover:text-gray-500 transition-colors">
+                        Conçu par Nathan Marzilli
+                    </a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- JAVASCRIPT APP LOGIC -->
-    <script>
-        // DATA: Les 11 Produits avec images officielles
-        // J'ai augmenté la résolution dans l'URL pour un meilleur rendu (w_500,h_400 au lieu de w_183,h_154)
-        
-        const productsData = [
-            {
-                id: 'fenetres',
-                title: 'Fenêtres',
-                category: 'Menuiserie',
-                image: 'https://static.wixstatic.com/media/082b83_bbf4389b5582478c900e7a9b5ad27f2d~mv2.png/v1/fill/w_500,h_400,al_c,q_90,enc_avif,quality_auto/fenetre.png',
-                desc: 'PVC, Aluminium ou Bois. Nos fenêtres allient haute performance thermique, acoustique et esthétique contemporaine pour illuminer votre intérieur.'
-            },
-            {
-                id: 'portes',
-                title: 'Portes d\'Entrée',
-                category: 'Menuiserie',
-                image: 'https://static.wixstatic.com/media/082b83_1978f41ec39440c99d84160d26bd2e1f~mv2.png/v1/fill/w_500,h_400,al_c,q_90,enc_avif,quality_auto/porte.png',
-                desc: 'La signature de votre façade. Sécurité renforcée, design moderne ou classique, nos portes d\'entrée accueillent vos invités avec élégance.'
-            },
-            {
-                id: 'volets',
-                title: 'Volets',
-                category: 'Fermetures',
-                image: 'https://static.wixstatic.com/media/082b83_227dfec3d5b44f878e8f4571045c4ba4~mv2.png/v1/fill/w_500,h_400,al_c,q_85,enc_avif,quality_auto/volets.png',
-                desc: 'Volets roulants ou battants. Une isolation supplémentaire et une obscurité totale pour vos nuits, pilotables à distance.'
-            },
-            {
-                id: 'stores',
-                title: 'Stores',
-                category: 'Protection Solaire',
-                image: 'https://static.wixstatic.com/media/082b83_b8b82e81eeea4dda910a8c92df9b1ca5~mv2.png/v1/fill/w_500,h_400,al_c,q_85,enc_avif,quality_auto/stores.png',
-                desc: 'Stores bannes pour la terrasse ou stores intérieurs. Gérez la luminosité et protégez-vous des UV avec style.'
-            },
-            {
-                id: 'grilles',
-                title: 'Grilles Métalliques',
-                category: 'Sécurité Pro',
-                image: 'https://static.wixstatic.com/media/082b83_2505228f98ad4b6bb4adc940cabe3a4d~mv2.jpg/v1/fill/w_500,h_400,al_c,q_80,enc_avif,quality_auto/grilles.jpg',
-                desc: 'Solutions de sécurité robustes pour commerces et habitations. Rideaux métalliques et grilles extensibles sur mesure.'
-            },
-            {
-                id: 'garages',
-                title: 'Portes de Garage',
-                category: 'Fermetures',
-                image: 'https://static.wixstatic.com/media/082b83_69d27e9d3a7a470683eb6482340392ab~mv2.jpg/v1/fill/w_500,h_400,al_c,q_80,enc_avif,quality_auto/garage.jpg',
-                desc: 'Sectionnelles, basculantes ou enroulables. Optimisez l\'espace de votre garage avec une isolation performante.'
-            },
-            {
-                id: 'portails',
-                title: 'Portails',
-                category: 'Extérieur',
-                image: 'https://static.wixstatic.com/media/082b83_3388b5fc8f484056a0728228a70148aa~mv2.png/v1/fill/w_500,h_400,al_c,q_85,enc_avif,quality_auto/portail.png',
-                desc: 'Coulissants ou battants, en Aluminium inaltérable. Motorisation intégrée pour un confort d\'accès total.'
-            },
-            {
-                id: 'bso',
-                title: 'BSO',
-                category: 'Protection Solaire',
-                image: 'https://static.wixstatic.com/media/082b83_93b79431feb0459e91aa5a9023909a9d~mv2.png/v1/fill/w_500,h_400,al_c,q_85,enc_avif,quality_auto/bso.png',
-                desc: 'Brise-Soleil Orientables. Le must de l\'architecture moderne pour moduler la lumière naturelle sans surchauffer.'
-            },
-            {
-                id: 'gardecorps',
-                title: 'Garde-Corps',
-                category: 'Sécurité',
-                image: 'https://static.wixstatic.com/media/082b83_f31743b7da6d496d99323154eb130d6a~mv2.jpg/v1/fill/w_500,h_400,al_c,q_80,enc_avif,quality_auto/gardecorps.jpg',
-                desc: 'Sécurisez vos terrasses et balcons avec transparence. Verre, inox ou aluminium pour un design épuré.'
-            },
-            {
-                id: 'pergolas',
-                title: 'Pergolas',
-                category: 'Outdoor Living',
-                image: 'https://static.wixstatic.com/media/082b83_9a8fbb245f7d435495ddaf7c8c0abab6~mv2_d_1396_1200_s_2.jpg/v1/fill/w_500,h_400,al_c,q_80,enc_avif,quality_auto/pergola.jpg',
-                desc: 'Pergolas bioclimatiques à lames orientables. Créez une nouvelle pièce de vie à l\'extérieur, utilisable toute l\'année.'
-            },
-            {
-                id: 'verrieres',
-                title: 'Verrières',
-                category: 'Design Intérieur',
-                image: 'https://static.wixstatic.com/media/082b83_b3aca071b6e049729a174439267106c0~mv2.jpg/v1/fill/w_500,h_400,al_c,q_80,enc_avif,quality_auto/verriere.jpg',
-                desc: 'L\'esprit atelier d\'artiste. Séparez vos espaces sans perdre la lumière avec nos verrières sur mesure en alu ou acier.'
-            }
-        ];
-
-        // INITIALISATION
-        document.addEventListener('DOMContentLoaded', () => {
-            const grid = document.getElementById('products-grid');
-            
-            // Génération des cartes produits
-            productsData.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'group relative rounded-3xl overflow-hidden cursor-pointer bg-white shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 img-container';
-                card.onclick = () => router('product', product.id);
-                
-                card.innerHTML = `
-                    <div class="h-64 flex items-center justify-center p-6 relative z-10">
-                        <img src="${product.image}" alt="${product.title}" class="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-xl">
-                    </div>
-                    <div class="p-6 relative bg-white z-20 h-full">
-                        <div class="absolute -top-6 right-6 bg-brand-accent text-white p-3 rounded-xl shadow-lg">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </div>
-                        <h4 class="text-xl font-display font-bold text-brand-dark mb-2">${product.title}</h4>
-                        <p class="text-gray-500 text-sm line-clamp-2">${product.desc}</p>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        });
-
-        // ROUTEUR SIMPLE (SPA)
-        function router(view, param) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            const homeView = document.getElementById('view-home');
-            const productView = document.getElementById('view-product');
-
-            if (view === 'home') {
-                productView.classList.add('hidden-page');
-                homeView.classList.remove('hidden-page');
-                homeView.classList.add('active-page');
-                
-                if (param) {
-                    setTimeout(() => {
-                        const el = document.getElementById(param);
-                        if(el) el.scrollIntoView({behavior: 'smooth'});
-                    }, 100);
-                }
-            } 
-            else if (view === 'product') {
-                const product = productsData.find(p => p.id === param);
-                if (!product) return;
-
-                document.getElementById('detail-title').innerText = product.title;
-                document.getElementById('detail-category').innerText = product.category;
-                document.getElementById('detail-desc').innerText = product.desc;
-                document.getElementById('detail-image').src = product.image;
-                
-                // On met à jour le select du formulaire au cas où l'utilisateur demande un devis ensuite
-                const select = document.getElementById('contact-subject');
-                // Essayer de trouver une option correspondante (simplifié)
-                for(let i=0; i<select.options.length; i++){
-                    if(product.title.includes(select.options[i].text)){
-                        select.selectedIndex = i;
-                        break;
-                    }
-                }
-
-                homeView.classList.add('hidden-page');
-                homeView.classList.remove('active-page');
-                productView.classList.remove('hidden-page');
-                productView.classList.add('active-page');
-            }
-        }
-
-        // Fonction spécifique pour aller au devis depuis un produit
-        function goToQuote() {
-            router('home', 'contact');
-        }
-        
-        // Mobile Menu Logic
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-    </script>
+    <!-- Logic Script -->
+    <script src="script.js"></script>
 </body>
 </html>

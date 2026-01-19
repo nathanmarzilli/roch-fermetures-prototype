@@ -5,7 +5,7 @@
  */
 
 /* ==========================================================================
-   DONNÉES (Produits & Avis)
+   DONNÉES (Produits & Avis & Réalisations)
    ========================================================================== */
 
 const productsData = [
@@ -100,12 +100,29 @@ const reviewsData = [
     { name: 'Nicolas F.', text: "Projet de véranda mené à bien malgré les contraintes techniques. Une équipe à l'écoute et force de proposition.", initial: 'N', color: 'bg-indigo-600' },
 ];
 
+/* Liste des images de réalisation. 
+   Pour ajouter des images, il suffit d'ajouter le chemin dans ce tableau.
+   Cela simule le comportement "logic" demandé.
+*/
+const realisationsData = [
+    'images/realisations/01.jfif',
+    'images/realisations/02.jfif',
+    'images/realisations/03.jfif',
+    'images/realisations/04.jfif',
+    'images/realisations/05.jfif',
+    'images/realisations/06.jfif',
+    'images/realisations/07.jfif',
+    'images/realisations/08.jfif',
+    'images/realisations/09.jfif'
+];
+
 /* ==========================================================================
    INITIALISATION DU DOM
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
     initProductsGrid();
+    initRealisationsGrid();
     initReviewsCarousel();
     initMobileMenu();
     initFormValidation();
@@ -117,11 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initProductsGrid() {
     const grid = document.getElementById('products-grid');
+    if(!grid) return;
     
     productsData.forEach(product => {
         const card = document.createElement('div');
         // Structure de carte "Full Image" avec overlay
-        card.className = 'group relative h-[400px] rounded-[2rem] overflow-hidden cursor-pointer shadow-lg wow-effect';
+        card.className = 'group relative h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl wow-effect border border-gray-100';
         card.onclick = () => router('product', product.id);
         
         card.innerHTML = `
@@ -129,21 +147,51 @@ function initProductsGrid() {
             <img src="${product.image}" alt="${product.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
             
             <!-- Overlay dégradé pour lisibilité texte -->
-            <div class="absolute inset-0 product-overlay opacity-80 group-hover:opacity-90 transition-opacity"></div>
+            <div class="absolute inset-0 product-overlay opacity-90 group-hover:opacity-100 transition-opacity"></div>
             
             <!-- Contenu texte positionné en bas -->
             <div class="absolute bottom-0 left-0 w-full p-8 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full mb-3">${product.category}</span>
+                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full mb-3 shadow-sm">${product.category}</span>
                 <h4 class="text-3xl font-display font-bold text-white mb-2">${product.title}</h4>
                 <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
                     <p class="text-gray-300 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 line-clamp-2">${product.desc}</p>
-                    <div class="mt-4 flex items-center text-brand-accent font-bold text-sm">
-                        Voir le produit <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    <div class="mt-4 flex items-center text-brand-accent font-bold text-sm uppercase tracking-wider">
+                        Découvrir <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </div>
                 </div>
             </div>
         `;
         grid.appendChild(card);
+    });
+}
+
+/* ==========================================================================
+   FONCTIONNALITÉS RÉALISATIONS
+   ========================================================================== */
+
+function initRealisationsGrid() {
+    const grid = document.getElementById('realisations-grid');
+    if(!grid) return;
+
+    realisationsData.forEach((imgSrc, index) => {
+        const item = document.createElement('div');
+        item.className = 'rounded-2xl overflow-hidden h-72 relative group cursor-pointer wow-effect shadow-md';
+        
+        // Placeholder pour l'image (si les fichiers locaux ne sont pas présents, on met une image par défaut ou une gestion d'erreur)
+        // Note: Sur une vraie implémentation locale, assurez-vous que les fichiers existent.
+        // Ici on utilise le chemin fourni. Si l'image n'existe pas, on met un fallback visuel.
+        item.innerHTML = `
+            <img src="${imgSrc}" 
+                 onerror="this.src='https://placehold.co/600x400/eee/ccc?text=Réalisation+${index+1}'"
+                 alt="Réalisation Roch Fermetures" 
+                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                 <div class="bg-white/20 backdrop-blur-md p-3 rounded-full">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                 </div>
+            </div>
+        `;
+        grid.appendChild(item);
     });
 }
 
@@ -159,18 +207,24 @@ function initReviewsCarousel() {
     // Génération des cartes avis
     reviewsData.forEach(review => {
         const slide = document.createElement('div');
-        slide.className = 'min-w-[85%] md:min-w-[40%] lg:min-w-[30%] snap-center bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-between wow-effect select-none';
+        slide.className = 'min-w-[85%] md:min-w-[40%] lg:min-w-[30%] snap-center bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col justify-between wow-effect select-none';
         
         slide.innerHTML = `
             <div>
-                <div class="text-yellow-400 flex mb-4 text-lg">★★★★★</div>
-                <p class="text-gray-600 mb-6 italic text-lg leading-relaxed">"${review.text}"</p>
+                <div class="flex gap-1 mb-6">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                </div>
+                <p class="text-gray-600 mb-8 text-lg leading-relaxed font-light">"${review.text}"</p>
             </div>
-            <div class="flex items-center mt-auto border-t border-gray-50 pt-4">
-                <div class="w-12 h-12 ${review.color} rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md">${review.initial}</div>
+            <div class="flex items-center mt-auto border-t border-gray-50 pt-6">
+                <div class="w-14 h-14 ${review.color} rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md ring-4 ring-gray-50">${review.initial}</div>
                 <div>
-                    <p class="font-bold text-brand-dark">${review.name}</p>
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Client Vérifié</p>
+                    <p class="font-bold text-brand-dark text-lg">${review.name}</p>
+                    <p class="text-xs text-brand-accent font-bold uppercase tracking-widest flex items-center"><i class="fas fa-check-circle mr-1"></i> Vérifié</p>
                 </div>
             </div>
         `;
@@ -263,7 +317,7 @@ function router(view, param) {
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                 }
-            }, 200);
+            }, 300);
         }
     } 
     else if (view === 'product') {
@@ -313,6 +367,8 @@ function initFormValidation() {
     const submitBtn = document.getElementById('submit-btn');
     const formContainer = document.getElementById('form-container');
     const successMsg = document.getElementById('success-message');
+    
+    if(!form) return;
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -357,7 +413,6 @@ function initFormValidation() {
         if (isValid) {
             // Simulation envoi avec animation bouton
             const btnText = submitBtn.querySelector('span');
-            const originalText = btnText.innerText;
             
             btnText.innerText = 'Envoi en cours...';
             submitBtn.disabled = true;

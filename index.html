@@ -30,7 +30,7 @@
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
                         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
                         'success-pop': 'successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                     },
@@ -40,7 +40,7 @@
                             '100%': { opacity: '1' },
                         },
                         slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
                         },
                         shake: {
@@ -66,7 +66,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Scrollbar hide for reviews but keep functionality */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -76,13 +75,8 @@
         }
 
         .hidden-page { display: none; }
-        
-        .active-page { 
-            display: block; 
-            animation: fadeIn 0.4s ease-out; 
-        }
+        .active-page { display: block; animation: fadeIn 0.4s ease-out; }
 
-        /* Effet Wow global sur les blocs interactifs */
         .wow-effect {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -91,15 +85,25 @@
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
         }
 
-        /* Overlay gradient pour les images produits */
         .product-overlay {
             background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, rgba(15, 23, 42, 0) 100%);
         }
         
-        /* Indicateur erreur formulaire */
         .input-error {
             border-color: #ef4444 !important;
             background-color: #fef2f2 !important;
+        }
+
+        /* Hero Specific Styles */
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(15,23,42,0.4) 0%, rgba(15,23,42,0.6) 100%);
+        }
+        
+        .rge-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
     </style>
 </head>
@@ -108,20 +112,21 @@
     <!-- NAVIGATION -->
     <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-24">
                 <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="router('home')">
-                    <div class="w-10 h-10 bg-brand-dark text-white flex items-center justify-center rounded-lg mr-3 font-display font-bold text-xl transition-transform group-hover:rotate-12">R</div>
+                    <div class="w-12 h-12 bg-brand-dark text-white flex items-center justify-center rounded-xl mr-3 font-display font-bold text-2xl transition-transform group-hover:rotate-12 shadow-lg">R</div>
                     <span class="font-display font-bold text-xl tracking-tight uppercase">Roch<span class="text-brand-accent">.</span>Fermetures</span>
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
                     <button onclick="router('home', 'produits')" class="text-sm font-medium hover:text-brand-accent transition-colors">Nos Produits</button>
-                    <button onclick="router('home', 'expertise')" class="text-sm font-medium hover:text-brand-accent transition-colors">L'Entreprise</button>
+                    <button onclick="router('home', 'realisations')" class="text-sm font-medium hover:text-brand-accent transition-colors">Réalisations</button>
+                    <button onclick="router('home', 'recrutement')" class="text-sm font-medium hover:text-brand-accent transition-colors">Recrutement</button>
                     <button onclick="router('home', 'avis')" class="text-sm font-medium hover:text-brand-accent transition-colors">Avis</button>
-                    <button onclick="router('home', 'contact')" class="px-5 py-2.5 bg-brand-dark text-white text-sm font-medium rounded-full hover:bg-brand-accent transition-all shadow-lg hover:shadow-brand-accent/30 transform hover:-translate-y-0.5">Demander un devis</button>
+                    <button onclick="router('home', 'contact')" class="px-6 py-3 bg-brand-dark text-white text-sm font-medium rounded-full hover:bg-brand-accent transition-all shadow-lg hover:shadow-brand-accent/30 transform hover:-translate-y-0.5">Demander un devis</button>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-brand-dark p-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
@@ -130,6 +135,8 @@
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white border-b border-gray-100 shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <button onclick="router('home', 'produits')" class="block w-full text-left px-3 py-3 font-medium hover:bg-gray-50 rounded-lg">Nos Produits</button>
+                <button onclick="router('home', 'realisations')" class="block w-full text-left px-3 py-3 font-medium hover:bg-gray-50 rounded-lg">Réalisations</button>
+                <button onclick="router('home', 'recrutement')" class="block w-full text-left px-3 py-3 font-medium hover:bg-gray-50 rounded-lg">Recrutement</button>
                 <button onclick="router('home', 'contact')" class="block w-full text-left px-3 py-3 font-bold text-brand-accent">Devis Gratuit</button>
             </div>
         </div>
@@ -140,148 +147,215 @@
     <!-- ========================================= -->
     <main id="view-home" class="active-page">
         
-        <!-- MODERN HERO SECTION (Full Width) -->
-        <header class="relative w-full h-screen min-h-[600px] flex items-center overflow-hidden">
-            <!-- Background Image Full Width -->
+        <!-- ULTRA MODERN HERO SECTION -->
+        <header class="relative w-full h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+            <!-- Background Image Full Width with Parallax Effect -->
             <div class="absolute inset-0 z-0">
                 <img src="https://static.wixstatic.com/media/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_90,enc_avif,quality_auto/villa-moderne.jpg" 
                      alt="Villa Moderne Haute-Savoie" 
-                     class="w-full h-full object-cover transition-transform duration-[10s] hover:scale-105">
-                <!-- Dark Overlay for text readability -->
-                <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+                     class="w-full h-full object-cover transform scale-105"
+                     style="animation: zoomEffect 20s infinite alternate;">
+                <!-- Modern Gradient Overlay -->
+                <div class="absolute inset-0 hero-gradient"></div>
             </div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-20">
-                <div class="max-w-3xl">
-                    <div class="inline-flex items-center px-4 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md mb-8 animate-fade-in">
-                        <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-                        <span class="text-xs font-bold tracking-wide uppercase text-white">RGE & Qualibat 2025</span>
+            <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+                
+                <!-- Main Title with staggered animation -->
+                <h1 class="text-6xl lg:text-8xl font-display font-bold leading-tight mb-8 text-white tracking-tight">
+                    <span class="block animate-slide-up" style="animation-delay: 0.1s;">L'Excellence</span>
+					<span class="block text-white animate-slide-up" style="animation-delay: 0.2s;">de l'Habitat</span>
+                </h1>
+                
+                <p class="text-xl lg:text-2xl text-gray-200 mb-12 max-w-3xl leading-relaxed font-light animate-slide-up" style="animation-delay: 0.3s;">
+                    Menuiserie architecturale et fermetures haut de gamme en Haute-Savoie.
+                </p>
+
+                <!-- RGE Highlight Badge - Key Focus -->
+                <div class="mb-12 animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="rge-badge inline-flex items-center px-8 py-4 rounded-2xl text-white transform hover:scale-105 transition-transform duration-300 cursor-default group">
+                        <div class="bg-green-500/20 p-2 rounded-full mr-4 group-hover:bg-green-500/40 transition-colors">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-xs uppercase tracking-widest text-green-300 font-bold mb-1">Confiance & Économies</p>
+                            <p class="font-bold text-lg md:text-xl">Fiez vous à une entreprise labellisée <span class="text-brand-accent">RGE</span> et bénéficiez d'une TVA à <span class="text-brand-accent">5,5%</span></p>
+                        </div>
                     </div>
-                    
-                    <h1 class="text-5xl lg:text-7xl font-display font-bold leading-tight mb-6 text-white animate-slide-up" style="animation-delay: 0.1s;">
-                        L'art de <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-500">l'ouverture.</span>
-                    </h1>
-                    
-                    <p class="text-lg lg:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed animate-slide-up" style="animation-delay: 0.2s;">
-                        Expert menuiserie en Haute-Savoie depuis 13 ans. Une alliance parfaite entre design architectural et performance thermique pour votre habitat.
-                    </p>
-                    
-                    <div class="flex flex-col sm:flex-row gap-4 animate-slide-up" style="animation-delay: 0.3s;">
-                        <button onclick="router('home', 'contact')" class="px-8 py-4 bg-brand-accent text-white rounded-xl font-bold shadow-[0_0_20px_rgba(194,65,12,0.5)] hover:bg-white hover:text-brand-accent transition-all transform hover:-translate-y-1">
-                            Commencer mon projet
-                        </button>
-                        <button onclick="router('home', 'produits')" class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/30 rounded-xl font-medium hover:bg-white hover:text-brand-dark transition-all transform hover:-translate-y-1">
-                            Découvrir nos univers
-                        </button>
-                    </div>
+                </div>
+                
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 animate-slide-up" style="animation-delay: 0.5s;">
+                    <button onclick="router('home', 'contact')" class="px-10 py-5 bg-brand-accent text-white rounded-full font-bold text-lg shadow-[0_0_30px_rgba(194,65,12,0.4)] hover:shadow-[0_0_50px_rgba(194,65,12,0.6)] hover:bg-white hover:text-brand-accent transition-all transform hover:-translate-y-1">
+                        Commencer mon projet
+                    </button>
+                    <button onclick="router('home', 'produits')" class="px-10 py-5 bg-white/5 backdrop-blur-md text-white border border-white/20 rounded-full font-bold text-lg hover:bg-white hover:text-brand-dark transition-all transform hover:-translate-y-1">
+                        Explorer nos univers
+                    </button>
                 </div>
             </div>
 
             <!-- Scroll Indicator -->
-            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce text-white/50">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/30">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
         </header>
 
         <!-- Catalogue Grid -->
-        <section id="produits" class="py-24 bg-white">
+        <section id="produits" class="py-32 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-3">Catalogue 2025</h2>
-                    <h3 class="text-4xl lg:text-5xl font-display font-bold text-brand-dark">Nos 11 Univers</h3>
-                    <div class="w-24 h-1 bg-brand-accent mx-auto mt-6 rounded-full"></div>
+                <div class="text-center mb-20">
+                    <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-3">Notre Collection</h2>
+                    <h3 class="text-4xl lg:text-5xl font-display font-bold text-brand-dark">Les 11 Univers</h3>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
-                    <!-- Products injected via JS with "Full Image" layout -->
+                    <!-- Products injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION RÉALISATIONS (NOUVEAU) -->
+        <section id="realisations" class="py-32 bg-gray-50 border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+                    <div>
+                        <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-3">Portfolio</h2>
+                        <h3 class="text-4xl lg:text-5xl font-display font-bold text-brand-dark">Nos Réalisations</h3>
+                    </div>
+                    <p class="mt-4 md:mt-0 text-gray-500 max-w-md text-right">
+                        Découvrez la qualité de nos installations en Haute-Savoie. Chaque projet est unique.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="realisations-grid">
+                    <!-- Images injectées via JS -->
                 </div>
             </div>
         </section>
 
         <!-- Expertise Section -->
-        <section id="expertise" class="py-24 bg-brand-dark text-white relative overflow-hidden">
-            <!-- Background element -->
-            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <section id="expertise" class="py-32 bg-brand-dark text-white relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div>
-                        <div class="inline-block px-4 py-1 rounded-full bg-brand-accent/20 text-brand-accent font-bold text-sm mb-6">Depuis 2012</div>
-                        <h2 class="text-4xl lg:text-5xl font-display font-bold mb-8">Expertise Locale & <br><span class="text-brand-accent">Savoir-faire.</span></h2>
-                        <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                        <div class="inline-block px-4 py-2 rounded-full bg-brand-accent/20 text-brand-accent font-bold text-sm mb-8 border border-brand-accent/20">Depuis 2012</div>
+                        <h2 class="text-4xl lg:text-6xl font-display font-bold mb-8">Expertise Locale & <br><span class="text-brand-accent">Savoir-faire.</span></h2>
+                        <p class="text-gray-400 text-xl leading-relaxed mb-10 font-light">
                             Nous ne vendons pas seulement des produits. Nous vous accompagnons de l'étude à la pose. Maîtrise totale de votre chantier à Publier, Thonon et dans tout le Chablais.
                         </p>
-                        <ul class="space-y-4 text-gray-300">
-                            <li class="flex items-center">
-                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <ul class="space-y-6 text-gray-300">
+                            <li class="flex items-center text-lg">
+                                <div class="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center mr-4">
+                                    <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
                                 Poseurs salariés qualifiés (Pas de sous-traitance)
                             </li>
-                            <li class="flex items-center">
-                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <li class="flex items-center text-lg">
+                                <div class="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center mr-4">
+                                    <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
                                 Étude thermique personnalisée
                             </li>
-                            <li class="flex items-center">
-                                <svg class="w-5 h-5 text-brand-accent mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <li class="flex items-center text-lg">
+                                <div class="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center mr-4">
+                                    <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
                                 Service Après-Vente réactif sous 48h
                             </li>
                         </ul>
                     </div>
                     <div class="grid grid-cols-2 gap-6">
-                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
-                            <div class="text-4xl font-bold text-brand-accent mb-2">100%</div>
-                            <div class="text-sm text-gray-400 font-medium">Satisfaction Client</div>
+                        <div class="wow-effect bg-white/5 p-10 rounded-[2rem] border border-white/10 backdrop-blur-sm">
+                            <div class="text-5xl font-bold text-brand-accent mb-3">100%</div>
+                            <div class="text-base text-gray-400 font-medium">Satisfaction Client</div>
                         </div>
-                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
-                            <div class="text-4xl font-bold text-white mb-2">RGE</div>
-                            <div class="text-sm text-gray-400 font-medium">Certifié Qualibat</div>
+                        <div class="wow-effect bg-white/5 p-10 rounded-[2rem] border border-white/10 backdrop-blur-sm">
+                            <div class="text-5xl font-bold text-white mb-3">RGE</div>
+                            <div class="text-base text-gray-400 font-medium">Certifié Qualibat</div>
                         </div>
-                        <div class="wow-effect bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm col-span-2">
-                            <div class="text-4xl font-bold text-white mb-2">13 Ans</div>
-                            <div class="text-sm text-gray-400 font-medium">D'expérience sur le bassin Lémanique</div>
+                        <div class="wow-effect bg-white/5 p-10 rounded-[2rem] border border-white/10 backdrop-blur-sm col-span-2">
+                            <div class="text-5xl font-bold text-white mb-3">13 Ans</div>
+                            <div class="text-base text-gray-400 font-medium">D'expérience sur le bassin Lémanique</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- AVIS CLIENTS (Swipeable) -->
-        <section id="avis" class="py-24 bg-gray-50 border-b border-gray-200 overflow-hidden">
+        <!-- AVIS CLIENTS -->
+        <section id="avis" class="py-32 bg-white border-b border-gray-100 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16">
                     <div>
-                        <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-2">Témoignages</h2>
-                        <h3 class="text-3xl lg:text-4xl font-display font-bold text-brand-dark">La parole à nos clients</h3>
+                        <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-3">Témoignages</h2>
+                        <h3 class="text-4xl lg:text-5xl font-display font-bold text-brand-dark">La parole à nos clients</h3>
                     </div>
-                    <div class="flex gap-2 mt-4 md:mt-0">
-                        <button id="prev-review" class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-brand-dark hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <div class="flex gap-4 mt-8 md:mt-0">
+                        <button id="prev-review" class="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-dark hover:text-white transition-all hover:scale-110">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="next-review" class="w-12 h-12 rounded-full border border-brand-dark bg-brand-dark text-white flex items-center justify-center hover:bg-brand-accent hover:border-brand-accent transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <button id="next-review" class="w-14 h-14 rounded-full bg-brand-dark text-white flex items-center justify-center hover:bg-brand-accent transition-all hover:scale-110 shadow-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Carousel Container -->
                 <div class="relative">
-                    <div id="reviews-track" class="flex gap-6 overflow-x-auto hide-scrollbar snap-x snap-mandatory py-4" style="scroll-behavior: smooth;">
-                        <!-- Reviews injected via JS (9 items) -->
+                    <div id="reviews-track" class="flex gap-8 overflow-x-auto hide-scrollbar snap-x snap-mandatory py-4" style="scroll-behavior: smooth;">
+                        <!-- Reviews injected via JS -->
                     </div>
                 </div>
                 
-                <div class="mt-8 text-center">
-                     <a href="https://www.google.com/search?q=Roch+Fermetures+Avis" target="_blank" class="inline-flex items-center text-sm font-bold text-brand-dark hover:text-brand-accent transition-colors border-b border-brand-dark hover:border-brand-accent pb-0.5">
+                <div class="mt-12 text-center">
+                     <a href="https://www.google.com/search?q=Roch+Fermetures+Avis" target="_blank" class="inline-flex items-center text-base font-bold text-brand-dark hover:text-brand-accent transition-colors border-b-2 border-brand-dark hover:border-brand-accent pb-1">
                         Lire les 142 avis sur Google
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- Contact / Showroom & FORMULAIRE -->
-        <section id="contact" class="py-24 bg-white relative">
+        <!-- SECTION RECRUTEMENT (NOUVEAU) -->
+        <section id="recrutement" class="py-32 bg-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl lg:grid lg:grid-cols-2 border border-gray-100">
+                <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2">
+                        <div class="relative min-h-[400px]">
+                            <img src="https://static.wixstatic.com/media/f04f97d2dc7e4a209901251f0f2534ce.jpg/v1/fill/w_802,h_534,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f04f97d2dc7e4a209901251f0f2534ce.jpg" alt="Recrutement Roch Fermetures" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-brand-accent/10 mix-blend-multiply"></div>
+                        </div>
+                        <div class="p-12 lg:p-20 flex flex-col justify-center">
+                            <div class="inline-block px-4 py-2 rounded-full bg-brand-light text-brand-accent font-bold text-sm mb-6 w-max">On recrute</div>
+                            <h3 class="text-4xl font-display font-bold text-brand-dark mb-6">Rejoignez l'équipe</h3>
+                            
+                            <div class="prose prose-lg text-gray-500 mb-8">
+                                <p class="mb-4">Dans le cadre de son développement Roch Fermetures spécialisé dans la vente et l'installation ainsi que la fabrication de menuiseries Aluminium et PVC, volets roulants, stores et vérandas recherche un(e) <strong>poseur confirmé</strong>.</p>
+                                
+                                <ul class="space-y-2 mb-6 list-none pl-0">
+                                    <li class="flex items-start"><span class="text-brand-accent mr-2">✓</span> Expérience professionnelle de 5 ans minimum</li>
+                                    <li class="flex items-start"><span class="text-brand-accent mr-2">✓</span> Esprit d'équipe, organisation, rigueur et précision</li>
+                                    <li class="flex items-start"><span class="text-brand-accent mr-2">✓</span> CAP Menuiserie et BP appréciés</li>
+                                </ul>
+                                
+                                <p class="text-sm font-medium text-brand-dark">Le salaire annuel brut est à déterminer selon profil.</p>
+                            </div>
+
+                            <button onclick="router('home', 'contact')" class="px-8 py-4 bg-brand-dark text-white rounded-xl font-bold hover:bg-brand-accent transition-all shadow-lg w-max">
+                                Postuler maintenant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact / Showroom & FORMULAIRE -->
+        <section id="contact" class="py-32 bg-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-[3rem] overflow-hidden shadow-2xl lg:grid lg:grid-cols-2 border border-gray-100">
                     
                     <!-- Colonne Gauche: Infos & Showroom -->
                     <div class="p-10 lg:p-16 bg-brand-dark text-white relative flex flex-col justify-between overflow-hidden">
@@ -324,7 +398,6 @@
                                      Ouvrir le GPS
                                 </span>
                              </div>
-                             <!-- Map Image pointing to Publier -->
                              <img src="https://static-maps.yandex.ru/1.x/?ll=6.540,46.398&z=15&l=map&size=600,300&pt=6.540,46.398,pm2rdm" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Plan d'accès">
                         </a>
                     </div>
@@ -537,12 +610,11 @@
                     <p class="text-gray-500 text-sm mt-1">© 2025 Tous droits réservés.</p>
                 </div>
                 
-                <!-- Lien subtil demandé -->
                 <div class="flex flex-col items-center md:items-end">
                     <div class="flex space-x-6 mb-2">
-                        <a href="https://www.facebook.com/rochfermetures" target="_blank" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.facebook.com/rochfermetures74/" target="_blank" class="text-gray-400 hover:text-white transition-colors text-xl"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/rochfermetures" target="_blank" class="text-gray-400 hover:text-white transition-colors text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-xl"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                     <a href="https://nathanmarzilli.github.io/portfolio/" target="_blank" class="text-xs text-gray-700 hover:text-gray-500 transition-colors">
                         Conçu par Nathan Marzilli

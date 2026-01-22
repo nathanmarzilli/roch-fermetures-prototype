@@ -28,9 +28,9 @@
                     },
                     colors: {
                         brand: {
-                            dark: '#0B0F19',      // Noir profond bleuté
-                            primary: '#3B82F6',   // Bleu électrique
-                            accent: '#F59E0B',    // Or/Ambre (bois/chaleur)
+                            dark: '#0B0F19',       // Noir profond bleuté
+                            primary: '#3B82F6',    // Bleu électrique
+                            accent: '#F59E0B',     // Or/Ambre (bois/chaleur)
                             glass: 'rgba(255, 255, 255, 0.05)',
                             glassBorder: 'rgba(255, 255, 255, 0.1)',
                         }
@@ -39,11 +39,16 @@
                         'float': 'float 6s ease-in-out infinite',
                         'float-delayed': 'float 6s ease-in-out 3s infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-down': 'fadeInDown 0.5s ease-out forwards',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -80,6 +85,13 @@
             box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
         }
 
+        /* Classe active pour la carte sélectionnée */
+        .glass-card.active-card {
+            border-color: #3B82F6;
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.2) 0%, rgba(255,255,255,0.01) 100%);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+        }
+
         .text-gradient {
             background: linear-gradient(to right, #ffffff, #94a3b8);
             -webkit-background-clip: text;
@@ -100,6 +112,18 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #475569;
         }
+
+        /* Animation pour l'ouverture de la sous-section */
+        #details-panel {
+            transition: max-height 0.7s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #details-panel.open {
+            max-height: 2000px; /* Valeur arbitraire haute pour permettre l'expansion */
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-primary selection:text-white">
@@ -119,10 +143,7 @@
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center gap-8">
                 <a href="#accueil" class="text-sm font-medium text-gray-300 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-brand-primary after:transition-all hover:after:w-full">Accueil</a>
-                <a href="#fenetres" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Fenêtres</a>
-                <a href="#volets" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Volets</a>
-                <a href="#portails" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Portails</a>
-                <a href="#pergolas" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Extérieur</a>
+                <a href="#services" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Nos Services</a>
                 <a href="#entreprise" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">L'Entreprise</a>
             </div>
 
@@ -145,9 +166,8 @@
             <i data-lucide="x" class="w-8 h-8"></i>
         </button>
         <a href="#accueil" class="text-2xl font-display font-bold text-white mobile-link">Accueil</a>
-        <a href="#fenetres" class="text-2xl font-display font-bold text-gray-400 mobile-link">Fenêtres</a>
-        <a href="#volets" class="text-2xl font-display font-bold text-gray-400 mobile-link">Volets</a>
-        <a href="#portails" class="text-2xl font-display font-bold text-gray-400 mobile-link">Portails</a>
+        <a href="#services" class="text-2xl font-display font-bold text-gray-400 mobile-link">Services</a>
+        <a href="#entreprise" class="text-2xl font-display font-bold text-gray-400 mobile-link">L'Entreprise</a>
         <a href="#contact" class="px-8 py-3 bg-brand-primary text-white rounded-full font-bold text-xl mobile-link">Contactez-nous</a>
     </div>
 
@@ -155,7 +175,11 @@
     <section id="accueil" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <!-- Background Image with Overlay (Vie Extérieur) -->
         <div class="absolute inset-0">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5RJciH2aQ4A3VNnxq3m9hhw0xI5K6tTfBRg&s" alt="Vie extérieur" class="w-full h-full object-cover">
+            <img
+			  src="images/vieExterieur.jpg"
+			  alt="Vie extérieure"
+			  class="w-full h-full object-cover"
+			/>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/90 to-brand-dark/60"></div>
         </div>
         
@@ -213,8 +237,8 @@
                 <!-- Floating Cards mimicking products -->
                 <div class="absolute top-10 right-10 w-64 h-auto glass-card rounded-2xl z-20 p-4 flex flex-col justify-between transform rotate-6 border-l-4 border-l-brand-primary animate-float">
                     <div class="bg-white/10 rounded-lg p-2 mb-4">
-                        <img src="https://static.wixstatic.com/media/082b83_bc01ec1a7359405e971a3d184c8645da~mv2.png/v1/fill/w_184,h_207,al_c,q_85,enc_avif,quality_auto/082b83_bc01ec1a7359405e971a3d184c8645da~mv2.png" alt="Profilé Alu" class="w-full h-auto object-contain">
-                    </div>
+						<img src="images/profileAlu.avif" alt="Profilé Alu" class="w-full h-auto object-contain">                  
+					</div>
                     <div>
                         <h3 class="font-bold text-xl">Profilés Alu</h3>
                         <p class="text-xs text-gray-400 mt-1">Finesse et lumière maximale.</p>
@@ -223,6 +247,7 @@
                 
                 <div class="absolute bottom-20 left-10 w-64 h-auto glass-card rounded-2xl z-30 p-6 flex flex-col justify-between transform -rotate-3 border-l-4 border-l-brand-accent animate-float-delayed">
                     <i data-lucide="sun" class="w-10 h-10 text-brand-accent mb-4"></i>
+						<img src="images/pergola.jfif" alt="Pergola" class="w-full h-auto object-contain">  
                     <div>
                         <h3 class="font-bold text-xl">Pergolas</h3>
                         <p class="text-sm text-gray-400 mt-2">Bioclimatiques à lames orientables pour votre terrasse.</p>
@@ -246,69 +271,68 @@
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="font-display text-4xl lg:text-5xl font-bold mb-4">Nos Expertises</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Une gamme complète de fermetures haut de gamme, installées par nos experts salariés.</p>
+                <p class="text-gray-400 max-w-2xl mx-auto">Une gamme complète de fermetures haut de gamme. <br><span class="text-brand-primary">Cliquez sur une image pour en savoir plus.</span></p>
             </div>
 
+            <!-- Bento Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[300px]">
                 
                 <!-- Fenêtres (Large Item) -->
-                <div class="md:col-span-2 lg:col-span-2 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer" id="fenetres">
-                    <img src="https://static.wixstatic.com/media/082b83_bbf4389b5582478c900e7a9b5ad27f2d~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/fenetre.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700" alt="Fenêtre et Baie">
+                <div onclick="openService('fenetres', this)" class="md:col-span-2 lg:col-span-2 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer service-card" id="card-fenetres">
+                    <img src="images/fenetres.webp" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700" alt="Fenêtre et Baie">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity"></div>
                     <div class="relative z-10 h-full flex flex-col justify-end p-8">
-                        <div class="bg-brand-primary w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                        <div class="bg-brand-primary w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
                             <i data-lucide="layout-grid" class="text-white"></i>
                         </div>
                         <h3 class="text-3xl font-bold mb-2">Fenêtres & Baies</h3>
-                        <p class="text-gray-300">PVC, Aluminium et Bois. Isolation haute performance. Gamme K-Line et Mc France.</p>
-                        <ul class="mt-4 space-y-2 text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0">
-                            <li>• Double & Triple Vitrage</li>
-                            <li>• Sécurité renforcée</li>
-                            <li>• Fabrication sur mesure</li>
-                        </ul>
+                        <p class="text-gray-300">PVC, Aluminium et Bois. Isolation haute performance.</p>
+                        <div class="mt-4 inline-flex items-center text-sm font-bold text-brand-primary opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all">
+                            Voir les détails <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Volets -->
-                <div class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6" id="volets">
-                     <img src="https://static.wixstatic.com/media/082b83_227dfec3d5b44f878e8f4571045c4ba4~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/volets.png" class="absolute -right-10 -top-10 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" alt="Volets">
+                <div onclick="openService('volets', this)" class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6 service-card" id="card-volets">
+                     <img src="images/volets.avif" class="absolute -right-10 -top-10 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" alt="Volets">
                      <div class="absolute inset-0 bg-gradient-to-br from-brand-dark/90 to-transparent"></div>
                      <div class="relative z-10">
                         <i data-lucide="blinds" class="w-10 h-10 text-brand-accent mb-4"></i>
                         <h3 class="text-xl font-bold mb-2">Volets</h3>
-                        <p class="text-sm text-gray-400">Roulants solaires, battants alu ou bois. Motorisation Somfy IO.</p>
+                        <p class="text-sm text-gray-400">Roulants solaires, battants alu ou bois.</p>
                      </div>
                 </div>
 
                 <!-- Portes d'Entrée -->
-                <div class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6">
-                    <img src="https://static.wixstatic.com/media/082b83_1978f41ec39440c99d84160d26bd2e1f~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/porte.png" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500" alt="Porte d'entrée">
+                <div onclick="openService('portes', this)" class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6 service-card" id="card-portes">
+                    <img src="images/porte.avif" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500" alt="Porte d'entrée">
                     <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent"></div>
                     <div class="relative z-10">
                         <i data-lucide="door-open" class="w-10 h-10 text-green-400 mb-4"></i>
                         <h3 class="text-xl font-bold mb-2">Portes d'Entrée</h3>
-                        <p class="text-sm text-gray-400">Blindées, Alu monobloc ou vitrées. Sécurité et design.</p>
+                        <p class="text-sm text-gray-400">Blindées, Alu monobloc ou vitrées.</p>
                     </div>
                 </div>
 
                 <!-- Portails & Garages -->
-                <div class="md:col-span-1 lg:col-span-1 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer p-6" id="portails">
-                    <img src="https://static.wixstatic.com/media/082b83_69d27e9d3a7a470683eb6482340392ab~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/garage.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700" alt="Portail aluminium">
+                <div onclick="openService('garage', this)" class="md:col-span-1 lg:col-span-1 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer p-6 service-card" id="card-garage">
+                    <img src="images/garage.avif" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700" alt="Portail aluminium">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="relative z-10 h-full flex flex-col justify-end">
                         <i data-lucide="car" class="w-10 h-10 text-white mb-4"></i>
                         <h3 class="text-2xl font-bold mb-2">Garage & Portails</h3>
-                        <p class="text-gray-300 text-sm">Portes sectionnelles, portails coulissants motorisés. La Toulousaine.</p>
+                        <p class="text-gray-300 text-sm">Portes sectionnelles, portails coulissants.</p>
                     </div>
                 </div>
 
                 <!-- Pergolas -->
-                <div class="md:col-span-2 lg:col-span-2 glass-card rounded-3xl flex items-center justify-between group cursor-pointer relative overflow-hidden" id="pergolas">
-                    <img src="https://static.wixstatic.com/media/082b83_9a8fbb245f7d435495ddaf7c8c0abab6~mv2_d_1396_1200_s_2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/pergola.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" alt="Pergola Bioclimatique">
+                <div onclick="openService('exterieur', this)" class="md:col-span-2 lg:col-span-2 glass-card rounded-3xl flex items-center justify-between group cursor-pointer relative overflow-hidden service-card" id="card-exterieur">
+                    <img src="images/vieExterieur2.avif" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" alt="Pergola Bioclimatique">
                     <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent"></div>
                     <div class="z-10 max-w-md p-8">
                         <h3 class="text-2xl font-bold mb-2 text-brand-accent">Vie Extérieure</h3>
-                        <p class="text-gray-300">Pergolas bioclimatiques, stores bannes et moustiquaires pour profiter de votre terrasse toute l'année.</p>
+                        <p class="text-gray-300">Pergolas bioclimatiques pour profiter de votre terrasse.</p>
                     </div>
                     <div class="z-10 p-8 hidden md:block">
                          <i data-lucide="umbrella" class="w-20 h-20 text-white/50 group-hover:text-brand-accent transition-colors transform group-hover:rotate-12"></i>
@@ -316,6 +340,42 @@
                 </div>
 
             </div>
+
+            <!-- DETAIL PANEL (Expandable Section) -->
+            <div id="details-panel" class="mt-8 rounded-3xl glass-panel border border-brand-primary/30 relative shadow-2xl overflow-hidden">
+                <button onclick="closeDetails()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-6 h-6 text-white"></i>
+                </button>
+                
+                <div class="grid lg:grid-cols-2 gap-0">
+                    <!-- Text Side -->
+                    <div class="p-8 lg:p-12 space-y-6">
+                        <h3 id="detail-title" class="text-3xl lg:text-4xl font-display font-bold text-brand-primary"></h3>
+                        <div id="detail-text" class="text-gray-300 space-y-4 leading-relaxed text-lg">
+                            <!-- Content injected via JS -->
+                        </div>
+                        <a href="#contact" class="inline-block mt-4 px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-blue-600 transition-colors shadow-lg">
+                            Demander une étude personnalisée
+                        </a>
+                    </div>
+                    
+                    <!-- Images Side -->
+                    <div class="bg-black/20 p-6 lg:p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+                            <div class="md:col-span-2 h-64 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                                <img id="detail-img-1" src="" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Detail 1">
+                            </div>
+                            <div class="h-48 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                                <img id="detail-img-2" src="" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Detail 2">
+                            </div>
+                            <div class="h-48 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                                <img id="detail-img-3" src="" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Detail 3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -387,7 +447,6 @@
         <div class="container mx-auto px-6 overflow-hidden">
             <p class="text-center text-sm text-gray-500 uppercase tracking-widest mb-8">Nos Partenaires de Confiance</p>
             <div class="flex flex-wrap justify-center gap-12 lg:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <!-- Text logos for simplicity & speed -->
                 <span class="text-2xl font-bold font-display text-white">K•LINE</span>
                 <span class="text-2xl font-bold font-display text-white">SOMFY</span>
                 <span class="text-2xl font-bold font-display text-white">LA TOULOUSAINE</span>
@@ -541,7 +600,7 @@
                 <p>Design Ultra Modern Concept</p>
             </div>
         </div>
-    </footer>	
+    </footer>   
     <!-- Logic Script -->
     <script src="script.js"></script>
 </body>

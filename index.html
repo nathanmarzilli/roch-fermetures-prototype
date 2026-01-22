@@ -28,19 +28,16 @@
                     },
                     colors: {
                         brand: {
-                            dark: '#0B0F19',     // Noir profond bleuté
-                            primary: '#3B82F6',  // Bleu électrique
-                            accent: '#F59E0B',   // Or/Ambre (bois/chaleur)
+                            dark: '#0B0F19',      // Noir profond bleuté
+                            primary: '#3B82F6',   // Bleu électrique
+                            accent: '#F59E0B',    // Or/Ambre (bois/chaleur)
                             glass: 'rgba(255, 255, 255, 0.05)',
                             glassBorder: 'rgba(255, 255, 255, 0.1)',
                         }
                     },
-                    backgroundImage: {
-                        'hero-pattern': "url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2700&auto=format&fit=crop')",
-                        'noise': "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.05%22/%3E%3C/svg%3E')",
-                    },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
@@ -89,12 +86,6 @@
             -webkit-text-fill-color: transparent;
         }
         
-        .text-gradient-gold {
-            background: linear-gradient(to right, #FCD34D, #F59E0B);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         /* Scrollbar custom */
         ::-webkit-scrollbar {
             width: 8px;
@@ -108,12 +99,6 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #475569;
-        }
-
-        /* Utility for image masks */
-        .mask-gradient-b {
-            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
         }
     </style>
 </head>
@@ -168,9 +153,11 @@
 
     <!-- Hero Section -->
     <section id="accueil" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <!-- Background Image with Overlay -->
-        <div class="absolute inset-0 bg-hero-pattern bg-cover bg-center bg-no-repeat"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-brand-dark/40"></div>
+        <!-- Background Image with Overlay (Vie Extérieur) -->
+        <div class="absolute inset-0">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5RJciH2aQ4A3VNnxq3m9hhw0xI5K6tTfBRg&s" alt="Vie extérieur" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/90 to-brand-dark/60"></div>
+        </div>
         
         <!-- Animated Blobs -->
         <div class="absolute top-1/4 -left-20 w-96 h-96 bg-blue-600/30 rounded-full blur-[100px] animate-pulse-slow"></div>
@@ -188,9 +175,9 @@
                     <span class="text-gradient">L'Exigence de 2026.</span>
                 </h1>
                 
-                <p class="text-lg text-gray-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                <p class="text-lg text-gray-300 max-w-xl mx-auto lg:mx-0 leading-relaxed drop-shadow-md">
                     Spécialiste de la menuiserie Alu, Bois et PVC à Thonon, Publier et Evian. 
-                    Nous transformons votre habitat avec des solutions d'isolation thermique performantes et esthétiques.
+                    Nous transformons votre habitat avec des solutions d'isolation thermique performantes.
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -207,16 +194,16 @@
                 <div class="grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
                     <div>
                         <p class="text-3xl font-display font-bold text-white">14+</p>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Années d'expérience</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider">Années d'expérience</p>
                     </div>
                     <div>
                         <p class="text-3xl font-display font-bold text-white">500+</p>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Projets Réussis</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider">Projets Réussis</p>
                     </div>
                     <div>
                         <p class="text-3xl font-display font-bold text-white">4.9</p>
                         <div class="flex text-brand-accent text-xs">★★★★★</div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Avis Google</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider">Avis Google</p>
                     </div>
                 </div>
             </div>
@@ -224,16 +211,18 @@
             <!-- Visual Abstract Representation -->
             <div class="relative hidden lg:block h-[600px]">
                 <!-- Floating Cards mimicking products -->
-                <div class="absolute top-10 right-10 w-64 h-80 glass-card rounded-2xl z-20 p-6 flex flex-col justify-between transform rotate-6 border-l-4 border-l-brand-primary">
-                    <i data-lucide="maximize" class="w-10 h-10 text-brand-primary"></i>
+                <div class="absolute top-10 right-10 w-64 h-auto glass-card rounded-2xl z-20 p-4 flex flex-col justify-between transform rotate-6 border-l-4 border-l-brand-primary animate-float">
+                    <div class="bg-white/10 rounded-lg p-2 mb-4">
+                        <img src="https://static.wixstatic.com/media/082b83_bc01ec1a7359405e971a3d184c8645da~mv2.png/v1/fill/w_184,h_207,al_c,q_85,enc_avif,quality_auto/082b83_bc01ec1a7359405e971a3d184c8645da~mv2.png" alt="Profilé Alu" class="w-full h-auto object-contain">
+                    </div>
                     <div>
-                        <h3 class="font-bold text-xl">Fenêtres Alu</h3>
-                        <p class="text-sm text-gray-400 mt-2">Profilés fins, lumière maximale. Isolation thermique renforcée.</p>
+                        <h3 class="font-bold text-xl">Profilés Alu</h3>
+                        <p class="text-xs text-gray-400 mt-1">Finesse et lumière maximale.</p>
                     </div>
                 </div>
                 
-                <div class="absolute bottom-20 left-10 w-64 h-72 glass-card rounded-2xl z-30 p-6 flex flex-col justify-between transform -rotate-3 border-l-4 border-l-brand-accent">
-                    <i data-lucide="sun" class="w-10 h-10 text-brand-accent"></i>
+                <div class="absolute bottom-20 left-10 w-64 h-auto glass-card rounded-2xl z-30 p-6 flex flex-col justify-between transform -rotate-3 border-l-4 border-l-brand-accent animate-float-delayed">
+                    <i data-lucide="sun" class="w-10 h-10 text-brand-accent mb-4"></i>
                     <div>
                         <h3 class="font-bold text-xl">Pergolas</h3>
                         <p class="text-sm text-gray-400 mt-2">Bioclimatiques à lames orientables pour votre terrasse.</p>
@@ -241,7 +230,7 @@
                 </div>
 
                 <!-- Decorative circle -->
-                <div class="absolute inset-0 border border-white/10 rounded-full animate-spin-slow" style="animation-duration: 30s;"></div>
+                <div class="absolute inset-0 border border-white/10 rounded-full animate-spin-slow" style="animation-duration: 40s;"></div>
             </div>
         </div>
         
@@ -263,10 +252,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[300px]">
                 
                 <!-- Fenêtres (Large Item) -->
-                <div class="md:col-span-2 lg:col-span-2 row-span-2 glass-card rounded-3xl p-8 relative overflow-hidden group cursor-pointer" id="fenetres">
-                    <img src="https://images.unsplash.com/photo-1503708928676-1cb796a0891e?q=80&w=1000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-700" alt="Fenêtres modernes">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                    <div class="relative z-10 h-full flex flex-col justify-end">
+                <div class="md:col-span-2 lg:col-span-2 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer" id="fenetres">
+                    <img src="https://static.wixstatic.com/media/082b83_bbf4389b5582478c900e7a9b5ad27f2d~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/fenetre.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700" alt="Fenêtre et Baie">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity"></div>
+                    <div class="relative z-10 h-full flex flex-col justify-end p-8">
                         <div class="bg-brand-primary w-12 h-12 rounded-full flex items-center justify-center mb-4">
                             <i data-lucide="layout-grid" class="text-white"></i>
                         </div>
@@ -281,19 +270,20 @@
                 </div>
 
                 <!-- Volets -->
-                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between group cursor-pointer relative overflow-hidden" id="volets">
-                     <div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-black opacity-90"></div>
+                <div class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6" id="volets">
+                     <img src="https://static.wixstatic.com/media/082b83_227dfec3d5b44f878e8f4571045c4ba4~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/volets.png" class="absolute -right-10 -top-10 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500" alt="Volets">
+                     <div class="absolute inset-0 bg-gradient-to-br from-brand-dark/90 to-transparent"></div>
                      <div class="relative z-10">
                         <i data-lucide="blinds" class="w-10 h-10 text-brand-accent mb-4"></i>
                         <h3 class="text-xl font-bold mb-2">Volets</h3>
                         <p class="text-sm text-gray-400">Roulants solaires, battants alu ou bois. Motorisation Somfy IO.</p>
                      </div>
-                     <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-brand-accent/20 rounded-full blur-2xl group-hover:bg-brand-accent/40 transition-all"></div>
                 </div>
 
                 <!-- Portes d'Entrée -->
-                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between group cursor-pointer relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-black opacity-90"></div>
+                <div class="glass-card rounded-3xl relative overflow-hidden group cursor-pointer flex flex-col justify-end p-6">
+                    <img src="https://static.wixstatic.com/media/082b83_1978f41ec39440c99d84160d26bd2e1f~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/porte.png" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-500" alt="Porte d'entrée">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent"></div>
                     <div class="relative z-10">
                         <i data-lucide="door-open" class="w-10 h-10 text-green-400 mb-4"></i>
                         <h3 class="text-xl font-bold mb-2">Portes d'Entrée</h3>
@@ -302,9 +292,9 @@
                 </div>
 
                 <!-- Portails & Garages -->
-                <div class="md:col-span-1 lg:col-span-1 row-span-2 glass-card rounded-3xl p-6 relative overflow-hidden group cursor-pointer" id="portails">
-                    <img src="https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all" alt="Portail aluminium">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                <div class="md:col-span-1 lg:col-span-1 row-span-2 glass-card rounded-3xl relative overflow-hidden group cursor-pointer p-6" id="portails">
+                    <img src="https://static.wixstatic.com/media/082b83_69d27e9d3a7a470683eb6482340392ab~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/garage.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700" alt="Portail aluminium">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="relative z-10 h-full flex flex-col justify-end">
                         <i data-lucide="car" class="w-10 h-10 text-white mb-4"></i>
                         <h3 class="text-2xl font-bold mb-2">Garage & Portails</h3>
@@ -313,12 +303,16 @@
                 </div>
 
                 <!-- Pergolas -->
-                <div class="md:col-span-2 lg:col-span-2 glass-card rounded-3xl p-8 flex items-center justify-between group cursor-pointer bg-gradient-to-r from-gray-900 to-gray-800" id="pergolas">
-                    <div class="z-10 max-w-xs">
+                <div class="md:col-span-2 lg:col-span-2 glass-card rounded-3xl flex items-center justify-between group cursor-pointer relative overflow-hidden" id="pergolas">
+                    <img src="https://static.wixstatic.com/media/082b83_9a8fbb245f7d435495ddaf7c8c0abab6~mv2_d_1396_1200_s_2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/pergola.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" alt="Pergola Bioclimatique">
+                    <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent"></div>
+                    <div class="z-10 max-w-md p-8">
                         <h3 class="text-2xl font-bold mb-2 text-brand-accent">Vie Extérieure</h3>
                         <p class="text-gray-300">Pergolas bioclimatiques, stores bannes et moustiquaires pour profiter de votre terrasse toute l'année.</p>
                     </div>
-                    <i data-lucide="umbrella" class="w-20 h-20 text-gray-700 group-hover:text-brand-accent transition-colors transform group-hover:rotate-12"></i>
+                    <div class="z-10 p-8 hidden md:block">
+                         <i data-lucide="umbrella" class="w-20 h-20 text-white/50 group-hover:text-brand-accent transition-colors transform group-hover:rotate-12"></i>
+                    </div>
                 </div>
 
             </div>
@@ -370,14 +364,14 @@
                 </div>
 
                 <div class="lg:w-1/2 relative">
-                    <!-- Tech Map Visualization -->
-                    <div class="glass-panel p-2 rounded-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1200&auto=format&fit=crop" class="rounded-xl w-full" alt="Atelier et équipe">
-                        <div class="absolute -bottom-6 -left-6 bg-white text-brand-dark p-6 rounded-xl shadow-xl max-w-xs">
+                    <!-- Image Chantier -->
+                    <div class="glass-panel p-2 rounded-2xl rotate-1 hover:rotate-0 transition-transform duration-500">
+                        <img src="https://static.wixstatic.com/media/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg/v1/fill/w_1905,h_919,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/082b83_74dd4e0fd4ab4bb0b74d74d6f825e512~mv2.jpg" class="rounded-xl w-full h-[400px] object-cover shadow-2xl" alt="Qualité et propreté de chantier">
+                        <div class="absolute -bottom-6 -left-6 bg-white text-brand-dark p-6 rounded-xl shadow-xl max-w-xs border border-gray-200">
                             <p class="font-display font-bold text-lg">"Qualité et propreté du chantier irréprochables."</p>
                             <div class="flex items-center gap-2 mt-2">
-                                <div class="w-8 h-8 bg-gray-300 rounded-full overflow-hidden">
-                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client">
+                                <div class="w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                    MD
                                 </div>
                                 <span class="text-sm font-semibold text-gray-600">Michel D., Publier</span>
                             </div>
@@ -547,8 +541,7 @@
                 <p>Design Ultra Modern Concept</p>
             </div>
         </div>
-    </footer>
-	
+    </footer>	
     <!-- Logic Script -->
     <script src="script.js"></script>
 </body>

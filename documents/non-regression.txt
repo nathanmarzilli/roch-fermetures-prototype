@@ -3,3 +3,9 @@ Pas de prévisualistion, donne moi juste les 2 fichiers modifiés
 
 
 Contrainte stricte : ne génère que le bloc de code html, et un autre javascript que je copierais moi même dans mon index.html dans les bonnes parties. Aucun texte explicatif, aucune introduction, aucune conclusion.
+
+
+ça c super : 
+Contrainte stricte : ne génère que le bloc de la section html à modifier.
+
+Contrainte stricte : ne génère que le bloc du javascript à modifier.

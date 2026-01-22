@@ -1,487 +1,61 @@
-/**
- * ROCH FERMETURES - SCRIPT PRINCIPAL
- * Gestion de la navigation, des données produits, des animations
- * et de la validation du formulaire.
- */
+        // Init Lucide Icons
+        lucide.createIcons();
 
-/* ==========================================================================
-   DONNÉES (Produits & Avis & Réalisations)
-   ========================================================================== */
-
-const productsData = [
-    {
-        id: 'fenetres',
-        title: 'Fenêtres',
-        category: 'Menuiserie',
-        image: 'https://static.wixstatic.com/media/082b83_bbf4389b5582478c900e7a9b5ad27f2d~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/fenetre.png',
-        desc: 'PVC, Aluminium ou Bois. Nos fenêtres allient haute performance thermique, acoustique et esthétique contemporaine pour illuminer votre intérieur.'
-    },
-    {
-        id: 'portes',
-        title: 'Portes d\'Entrée',
-        category: 'Menuiserie',
-        image: 'https://static.wixstatic.com/media/082b83_1978f41ec39440c99d84160d26bd2e1f~mv2.png/v1/fill/w_800,h_600,al_c,q_90,enc_avif,quality_auto/porte.png',
-        desc: 'La signature de votre façade. Sécurité renforcée, design moderne ou classique, nos portes d\'entrée accueillent vos invités avec élégance.'
-    },
-    {
-        id: 'volets',
-        title: 'Volets',
-        category: 'Fermetures',
-        image: 'https://static.wixstatic.com/media/082b83_227dfec3d5b44f878e8f4571045c4ba4~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/volets.png',
-        desc: 'Volets roulants ou battants. Une isolation supplémentaire et une obscurité totale pour vos nuits, pilotables à distance.'
-    },
-    {
-        id: 'stores',
-        title: 'Stores',
-        category: 'Protection Solaire',
-        image: 'https://static.wixstatic.com/media/082b83_b8b82e81eeea4dda910a8c92df9b1ca5~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/stores.png',
-        desc: 'Stores bannes pour la terrasse ou stores intérieurs. Gérez la luminosité et protégez-vous des UV avec style.'
-    },
-    {
-        id: 'grilles',
-        title: 'Grilles Métalliques',
-        category: 'Sécurité Pro',
-        image: 'https://static.wixstatic.com/media/082b83_2505228f98ad4b6bb4adc940cabe3a4d~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/grilles.jpg',
-        desc: 'Solutions de sécurité robustes pour commerces et habitations. Rideaux métalliques et grilles extensibles sur mesure.'
-    },
-    {
-        id: 'garages',
-        title: 'Portes de Garage',
-        category: 'Fermetures',
-        image: 'https://static.wixstatic.com/media/082b83_69d27e9d3a7a470683eb6482340392ab~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/garage.jpg',
-        desc: 'Sectionnelles, basculantes ou enroulables. Optimisez l\'espace de votre garage avec une isolation performante.'
-    },
-    {
-        id: 'portails',
-        title: 'Portails',
-        category: 'Extérieur',
-        image: 'https://static.wixstatic.com/media/082b83_3388b5fc8f484056a0728228a70148aa~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/portail.png',
-        desc: 'Coulissants ou battants, en Aluminium inaltérable. Motorisation intégrée pour un confort d\'accès total.'
-    },
-    {
-        id: 'bso',
-        title: 'BSO',
-        category: 'Protection Solaire',
-        image: 'https://static.wixstatic.com/media/082b83_93b79431feb0459e91aa5a9023909a9d~mv2.png/v1/fill/w_800,h_600,al_c,q_85,enc_avif,quality_auto/bso.png',
-        desc: 'Brise-Soleil Orientables. Le must de l\'architecture moderne pour moduler la lumière naturelle sans surchauffer.'
-    },
-    {
-        id: 'gardecorps',
-        title: 'Garde-Corps',
-        category: 'Sécurité',
-        image: 'https://static.wixstatic.com/media/082b83_f31743b7da6d496d99323154eb130d6a~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/gardecorps.jpg',
-        desc: 'Sécurisez vos terrasses et balcons avec transparence. Verre, inox ou aluminium pour un design épuré.'
-    },
-    {
-        id: 'pergolas',
-        title: 'Pergolas',
-        category: 'Outdoor Living',
-        image: 'https://static.wixstatic.com/media/082b83_9a8fbb245f7d435495ddaf7c8c0abab6~mv2_d_1396_1200_s_2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/pergola.jpg',
-        desc: 'Pergolas bioclimatiques à lames orientables. Créez une nouvelle pièce de vie à l\'extérieur, utilisable toute l\'année.'
-    },
-    {
-        id: 'verrieres',
-        title: 'Verrières',
-        category: 'Design Intérieur',
-        image: 'https://static.wixstatic.com/media/082b83_b3aca071b6e049729a174439267106c0~mv2.jpg/v1/fill/w_800,h_600,al_c,q_80,enc_avif,quality_auto/verriere.jpg',
-        desc: 'L\'esprit atelier d\'artiste. Séparez vos espaces sans perdre la lumière avec nos verrières sur mesure en alu ou acier.'
-    }
-];
-
-const reviewsData = [
-    { name: 'Marc D.', text: "Travail impeccable pour le changement de mes fenêtres. L'équipe est pro, ponctuelle et le chantier a été laissé très propre.", initial: 'M', color: 'bg-brand-dark' },
-    { name: 'Sophie L.', text: "Très bons conseils pour notre pergola. Le commercial a pris le temps d'étudier notre terrasse. Le résultat est magnifique.", initial: 'S', color: 'bg-brand-accent' },
-    { name: 'Pierre V.', text: "Portail motorisé installé la semaine dernière. Matériel de qualité, entreprise sérieuse et réactive. Merci à toute l'équipe.", initial: 'P', color: 'bg-gray-400' },
-    { name: 'Julie A.', text: "Nous avons fait installer des BSO sur toute la maison. Isolation thermique au top cet été. Je recommande Roch Fermetures.", initial: 'J', color: 'bg-blue-600' },
-    { name: 'Thomas R.', text: "Remplacement de porte de garage. Délais respectés et pose soignée. Le technicien a pris le temps de tout m'expliquer.", initial: 'T', color: 'bg-green-600' },
-    { name: 'Élodie M.', text: "Super showroom à Publier qui permet de bien voir les produits. L'accueil est chaleureux et professionnel.", initial: 'E', color: 'bg-purple-600' },
-    { name: 'Karim B.', text: "Rénovation complète de mes menuiseries. Excellent rapport qualité/prix par rapport à la concurrence locale.", initial: 'K', color: 'bg-yellow-600' },
-    { name: 'Chantal P.', text: "Un SAV très réactif suite à un petit réglage nécessaire sur mon volet. C'est rassurant d'avoir des pros à proximité.", initial: 'C', color: 'bg-red-500' },
-    { name: 'Nicolas F.', text: "Projet de véranda mené à bien malgré les contraintes techniques. Une équipe à l'écoute et force de proposition.", initial: 'N', color: 'bg-indigo-600' },
-];
-
-/* Liste des images de réalisation. 
-   Pour ajouter des images, il suffit d'ajouter le chemin dans ce tableau.
-   Cela simule le comportement "logic" demandé.
-*/
-const realisationsData = [
-    'images/realisations/01.jfif',
-    'images/realisations/02.jfif',
-    'images/realisations/03.jfif',
-    'images/realisations/04.jfif',
-    'images/realisations/05.jfif',
-    'images/realisations/06.jfif',
-    'images/realisations/07.jfif',
-    'images/realisations/08.jfif',
-    'images/realisations/09.jfif'
-];
-
-/* ==========================================================================
-   INITIALISATION DU DOM
-   ========================================================================== */
-
-document.addEventListener('DOMContentLoaded', () => {
-    initProductsGrid();
-    initRealisationsGrid();
-    initReviewsCarousel();
-    initMobileMenu();
-    initFormValidation();
-});
-
-/* ==========================================================================
-   FONCTIONNALITÉS PRODUITS
-   ========================================================================== */
-
-function initProductsGrid() {
-    const grid = document.getElementById('products-grid');
-    if(!grid) return;
-    
-    productsData.forEach(product => {
-        const card = document.createElement('div');
-        // MODIFICATION: Taille ajustée à h-72 pour alignement avec les réalisations. Design "Premium" appliqué.
-        card.className = 'group relative h-72 rounded-[2rem] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-brand-gold/50';
-        card.onclick = () => router('product', product.id);
-        
-        card.innerHTML = `
-            <!-- Image de fond prenant toute la place, object-cover pour éviter l'étirement -->
-            <img src="${product.image}" alt="${product.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-            
-            <!-- Overlay dégradé plus sombre et élégant pour le style premium -->
-            <div class="absolute inset-0 product-overlay opacity-90 transition-opacity"></div>
-            
-            <!-- Contenu texte positionné en bas avec style affiné -->
-            <div class="absolute bottom-0 left-0 w-full p-8 z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full shadow-sm">${product.category}</span>
-                </div>
-                <h4 class="text-3xl font-display font-bold text-white mb-2 tracking-tight group-hover:text-brand-gold transition-colors duration-300">${product.title}</h4>
-                <div class="h-0 group-hover:h-auto overflow-hidden transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100">
-                    <p class="text-gray-300 text-sm mt-2 leading-relaxed line-clamp-2 font-light border-l-2 border-brand-gold pl-3">${product.desc}</p>
-                    <div class="mt-4 flex items-center text-brand-gold font-bold text-xs uppercase tracking-widest">
-                        Explorer <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </div>
-                </div>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-/* ==========================================================================
-   FONCTIONNALITÉS RÉALISATIONS
-   ========================================================================== */
-
-function initRealisationsGrid() {
-    const grid = document.getElementById('realisations-grid');
-    if(!grid) return;
-
-    realisationsData.forEach((imgSrc, index) => {
-        const item = document.createElement('div');
-        // MODIFICATION: Retour à h-72 pour standardisation.
-        item.className = 'rounded-2xl overflow-hidden h-72 relative group cursor-pointer wow-effect shadow-md';
-        item.setAttribute('onclick', `openLightbox('${imgSrc}')`);
-        
-        // Placeholder pour l'image
-        item.innerHTML = `
-            <img src="${imgSrc}" 
-                 onerror="this.src='https://placehold.co/600x400/eee/ccc?text=Réalisation+${index+1}'"
-                 alt="Réalisation Roch Fermetures" 
-                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                 <div class="bg-white/20 backdrop-blur-md p-3 rounded-full hover:bg-white/40 transition-colors">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                 </div>
-            </div>
-        `;
-        grid.appendChild(item);
-    });
-}
-
-/* ==========================================================================
-   LIGHTBOX (Visualisation image)
-   ========================================================================== */
-
-function openLightbox(src) {
-    const lightbox = document.getElementById('lightbox');
-    const img = document.getElementById('lightbox-img');
-    
-    // Gestion de l'image de fallback si le lien local ne marche pas (pour la démo)
-    const imgElement = new Image();
-    imgElement.src = src;
-    
-    imgElement.onload = () => {
-         img.src = src;
-    };
-    imgElement.onerror = () => {
-         // Fallback si l'image n'existe pas
-         img.src = 'https://placehold.co/800x600/eee/ccc?text=Image+Non+Disponible';
-    };
-
-    lightbox.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // Empêcher le scroll arrière-plan
-}
-
-function closeLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    lightbox.classList.add('hidden');
-    document.body.style.overflow = 'auto'; // Réactiver le scroll
-}
-
-/* ==========================================================================
-   CARROUSEL AVIS (Swipe + Boutons)
-   ========================================================================== */
-
-function initReviewsCarousel() {
-    const track = document.getElementById('reviews-track');
-    const btnPrev = document.getElementById('prev-review');
-    const btnNext = document.getElementById('next-review');
-
-    // Génération des cartes avis
-    reviewsData.forEach(review => {
-        const slide = document.createElement('div');
-        slide.className = 'min-w-[85%] md:min-w-[40%] lg:min-w-[30%] snap-center bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col justify-between wow-effect select-none';
-        
-        slide.innerHTML = `
-            <div>
-                <div class="flex gap-1 mb-6">
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <i class="fas fa-star text-yellow-400"></i>
-                </div>
-                <p class="text-gray-600 mb-8 text-lg leading-relaxed font-light">"${review.text}"</p>
-            </div>
-            <div class="flex items-center mt-auto border-t border-gray-50 pt-6">
-                <div class="w-14 h-14 ${review.color} rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md ring-4 ring-gray-50">${review.initial}</div>
-                <div>
-                    <p class="font-bold text-brand-dark text-lg">${review.name}</p>
-                    <p class="text-xs text-brand-accent font-bold uppercase tracking-widest flex items-center"><i class="fas fa-check-circle mr-1"></i> Vérifié</p>
-                </div>
-            </div>
-        `;
-        track.appendChild(slide);
-    });
-
-    // Navigation Boutons
-    btnPrev.addEventListener('click', () => {
-        track.scrollBy({ left: -400, behavior: 'smooth' });
-    });
-    
-    btnNext.addEventListener('click', () => {
-        track.scrollBy({ left: 400, behavior: 'smooth' });
-    });
-
-    // Logique Swipe Tactile (Mobile)
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    track.addEventListener('mousedown', (e) => {
-        isDown = true;
-        track.classList.add('cursor-grabbing');
-        startX = e.pageX - track.offsetLeft;
-        scrollLeft = track.scrollLeft;
-    });
-    track.addEventListener('mouseleave', () => {
-        isDown = false;
-        track.classList.remove('cursor-grabbing');
-    });
-    track.addEventListener('mouseup', () => {
-        isDown = false;
-        track.classList.remove('cursor-grabbing');
-    });
-    track.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - track.offsetLeft;
-        const walk = (x - startX) * 2; // Vitesse du scroll
-        track.scrollLeft = scrollLeft - walk;
-    });
-
-    // Touch events pour mobile (Swipe natif amélioré)
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    track.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, {passive: true});
-
-    track.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, {passive: true});
-
-    function handleSwipe() {
-        if (touchEndX < touchStartX - 50) {
-            // Swipe Left -> Next
-            track.scrollBy({ left: 300, behavior: 'smooth' });
-        }
-        if (touchEndX > touchStartX + 50) {
-            // Swipe Right -> Prev
-            track.scrollBy({ left: -300, behavior: 'smooth' });
-        }
-    }
-}
-
-/* ==========================================================================
-   NAVIGATION & ROUTING
-   ========================================================================== */
-
-function router(view, param) {
-    const homeView = document.getElementById('view-home');
-    const productView = document.getElementById('view-product');
-
-    if (view === 'home') {
-        const wasHidden = homeView.classList.contains('hidden-page');
-
-        productView.classList.add('hidden-page');
-        productView.classList.remove('active-page');
-        homeView.classList.remove('hidden-page');
-        homeView.classList.add('active-page');
-        
-        if (param) {
-            // MODIFICATION: Correction du bug. Si on a une ancre, on scrolle vers l'élément directement.
-            // On ne scrolle plus en haut de page avant.
-            // Petit délai si on vient d'une autre page pour laisser le temps au DOM de s'afficher.
-            const delay = wasHidden ? 100 : 0;
-            
-            setTimeout(() => {
-                const el = document.getElementById(param);
-                if(el) {
-                    const headerOffset = 100;
-                    const elementPosition = el.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                }
-            }, delay);
-        } else {
-            // Si pas d'ancre, alors on remonte en haut
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    } 
-    else if (view === 'product') {
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Pour la page produit, on veut toujours être en haut
-
-        const product = productsData.find(p => p.id === param);
-        if (!product) return;
-
-        // Populate details
-        document.getElementById('detail-title').innerText = product.title;
-        document.getElementById('detail-category').innerText = product.category;
-        document.getElementById('detail-desc').innerText = product.desc;
-        document.getElementById('detail-image').src = product.image;
-        
-        // Auto-select in form
-        const select = document.getElementById('contact-subject');
-        for(let i=0; i<select.options.length; i++){
-            if(product.title.includes(select.options[i].text) || select.options[i].text.includes(product.title)){
-                select.selectedIndex = i;
-                break;
-            }
-        }
-
-        homeView.classList.add('hidden-page');
-        homeView.classList.remove('active-page');
-        productView.classList.remove('hidden-page');
-        productView.classList.add('active-page');
-    }
-}
-
-function goToQuote() {
-    router('home', 'contact');
-}
-
-function initMobileMenu() {
-    const btn = document.getElementById('mobile-menu-btn');
-    const menu = document.getElementById('mobile-menu');
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
-}
-
-/* ==========================================================================
-   VALIDATION FORMULAIRE & ANIMATION JS
-   ========================================================================== */
-
-function initFormValidation() {
-    const form = document.getElementById('contact-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const formContainer = document.getElementById('form-container');
-    const successMsg = document.getElementById('success-message');
-    
-    if(!form) return;
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        let isValid = true;
-        const requiredFields = form.querySelectorAll('[required], input[name="nom"], input[name="prenom"], input[name="email"], input[name="phone"], input[name="cp"], input[name="ville"]');
-        
-        // Reset errors
-        document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('input').forEach(el => el.classList.remove('input-error'));
-
-        // Check fields
-        requiredFields.forEach(field => {
-            const val = field.value.trim();
-            const parent = field.closest('.form-group'); // Assurez-vous d'avoir des wrappers form-group
-            
-            if (!val) {
-                isValid = false;
-                field.classList.add('input-error');
-                // Animation "Shake" sur le champ vide
-                field.classList.add('animate-shake');
-                setTimeout(() => field.classList.remove('animate-shake'), 500);
-                
-                if (parent && parent.querySelector('.error-msg')) {
-                    parent.querySelector('.error-msg').classList.remove('hidden');
-                }
-            }
-            
-            // Validation Email simple
-            if (field.type === 'email' && val) {
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(val)) {
-                    isValid = false;
-                    field.classList.add('input-error');
-                    field.classList.add('animate-shake');
-                    setTimeout(() => field.classList.remove('animate-shake'), 500);
-                    if (parent) parent.querySelector('.error-msg').classList.remove('hidden');
-                }
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2');
+                navbar.firstElementChild.classList.add('bg-brand-dark/90');
+                navbar.firstElementChild.classList.replace('glass-panel', 'bg-brand-dark');
+            } else {
+                navbar.classList.remove('py-2');
+                navbar.firstElementChild.classList.remove('bg-brand-dark/90');
+                navbar.firstElementChild.classList.replace('bg-brand-dark', 'glass-panel');
             }
         });
 
-        if (isValid) {
-            // Simulation envoi avec animation bouton
-            const btnText = submitBtn.querySelector('span');
-            
-            btnText.innerText = 'Envoi en cours...';
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+        // Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
 
-            setTimeout(() => {
-                // Succès : Masquer formulaire, afficher message
-                form.style.display = 'none';
-                formContainer.querySelector('h3').style.display = 'none';
-                formContainer.querySelector('p').style.display = 'none';
-                
-                successMsg.classList.remove('hidden');
-                
-                // Scroll vers le message si nécessaire
-                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 1500);
-        }
-    });
-    
-    // Retirer l'erreur quand l'utilisateur tape
-    form.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', function() {
-            this.classList.remove('input-error');
-            const parent = this.closest('.form-group');
-            if(parent && parent.querySelector('.error-msg')) {
-                parent.querySelector('.error-msg').classList.add('hidden');
+        function toggleMenu() {
+            const isClosed = mobileMenu.classList.contains('translate-x-full');
+            if (isClosed) {
+                mobileMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
             }
+        }
+
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+        
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
         });
-    });
-}
+
+        // Intersection Observer for Fade In Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div').forEach((el) => {
+            el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(el);
+        });
